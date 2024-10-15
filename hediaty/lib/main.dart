@@ -11,7 +11,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Gifter',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -30,8 +31,9 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Gifter'),
     );
   }
 }
@@ -78,6 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
+        //The app's icon
+        leading: Image.asset("assets/gift_logo.jpg"),
+
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
@@ -85,6 +90,13 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+
+        actions: <Widget>[
+          IconButton(
+            onPressed: (){print("Oi Stop");},
+            tooltip: "Add Gift List",
+            icon: const Icon(Icons.add)),
+        ],
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
