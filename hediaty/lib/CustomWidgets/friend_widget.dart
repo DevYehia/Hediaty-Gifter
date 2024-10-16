@@ -1,0 +1,41 @@
+/*This Widget Contains:
+*Friend's Icon
+*Friend's Name
+*Friend's Number of Upcoming Events
+All of which are aligned horizontally
+*/
+import 'package:flutter/material.dart';
+
+//***For the Future***
+//When making real-time upcoming events updates
+//this class may be a stateful widget
+
+class FriendWidget extends StatelessWidget{
+  //Image? friendImage;
+  final String friendName;
+  final int upcomingEvents = 0;
+  final double paddingPixels = 16;
+  const FriendWidget({super.key, required this.friendName});
+  
+  @override
+  Widget build(BuildContext context) {
+    String upcomingEventsMsg = "Events: $upcomingEvents";
+
+    return Row(children: [
+      const Icon(Icons.photo_size_select_actual_rounded),
+      Padding(
+        padding: EdgeInsets.all(paddingPixels),
+        child: Text(friendName),
+      ),  
+      Padding(
+        padding: EdgeInsets.all(paddingPixels),
+        child: Text(upcomingEventsMsg)
+      )]
+        );
+  }
+
+  
+
+
+
+}
