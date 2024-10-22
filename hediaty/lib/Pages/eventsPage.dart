@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../CustomWidgets/friend_widget.dart';
-import '../Pages/eventsPage.dart';
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class EventPage extends StatefulWidget {
+  const EventPage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -16,17 +15,22 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<EventPage> createState() => _EventPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _EventPageState extends State<EventPage> {
 
+  int navCurrIndex = 0;
   @override
   Widget build(BuildContext context) {
 
-    
     List<FriendWidget> testFriendList = List<FriendWidget>.filled(20,const FriendWidget(friendName: "Youssef"),growable: false);
-
+    // This method is rerun every time setState is called, for instance as done
+    // by the _incrementCounter method above.
+    //
+    // The Flutter framework has been optimized to make rerunning build methods
+    // fast, so that you can just rebuild anything that needs updating rather
+    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         //The app's icon
@@ -36,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
+        // Here we take the value from the EventPage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
 
@@ -48,8 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.add)),
         ],
       ),
-      body:  SingleChildScrollView(
-        child: Column(
+      body:  const SingleChildScrollView(
+        child: Center( child: Column(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
           // children horizontally, and tries to be as tall as its parent.
@@ -64,7 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           //mainAxisAlignment: MainAxisAlignment.center,
-          children: testFriendList
+          children: [Text("Yohohoho")]
+        )
     )
       ),
     );

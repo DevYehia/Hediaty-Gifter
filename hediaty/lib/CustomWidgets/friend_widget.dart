@@ -20,22 +20,24 @@ class FriendWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     String upcomingEventsMsg = "Events: $upcomingEvents";
+    Padding displayedImage = Padding(padding: EdgeInsets.all(paddingPixels),
+    child: Icon(Icons.photo_size_select_actual_rounded));
 
-    return Row(children: [
-      const Icon(Icons.photo_size_select_actual_rounded),
-      Padding(
-        padding: EdgeInsets.all(paddingPixels),
-        child: Text(friendName),
-      ),  
-      Padding(
-        padding: EdgeInsets.all(paddingPixels),
-        child: Text(upcomingEventsMsg)
-      )]
+    return InkWell(
+        child: Row(children: [
+        displayedImage,
+        Padding(
+            padding: EdgeInsets.all(paddingPixels),
+            child: Text(friendName, style: TextStyle(color:Colors.blue,fontFamily: "", fontSize: 24)),
+        ),  
+        Padding(
+            padding: EdgeInsets.all(paddingPixels),
+            child: Text(upcomingEventsMsg, style: TextStyle(color:Colors.red))
+        )]
+        ),
+        onTap: (){print("Hello jj");}
         );
   }
-
-  
-
 
 
 }
