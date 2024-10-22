@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SearchBar(leading: Icon(Icons.search)),
           IconButton(
             onPressed: (){print("Oi Stop");},
-            tooltip: "Add Gift List",
+            tooltip: "Add Friend",
             icon: const Icon(Icons.add)),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/CustomWidgets/eventWidget.dart';
 import '../CustomWidgets/friend_widget.dart';
 class EventPage extends StatefulWidget {
   const EventPage({super.key, required this.title});
@@ -24,7 +25,7 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
 
-    List<FriendWidget> testFriendList = List<FriendWidget>.filled(20,const FriendWidget(friendName: "Youssef"),growable: false);
+    List<EventWidget> testEventList = List<EventWidget>.filled(20,EventWidget(eventName: "Nkset 24", eventDate: DateTime.now(), category: "Sadness"),growable: false);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -48,11 +49,11 @@ class _EventPageState extends State<EventPage> {
           SearchBar(leading: Icon(Icons.search)),
           IconButton(
             onPressed: (){print("Oi Stop");},
-            tooltip: "Add Gift List",
+            tooltip: "Add Event",
             icon: const Icon(Icons.add)),
         ],
       ),
-      body:  const SingleChildScrollView(
+      body:  SingleChildScrollView(
         child: Center( child: Column(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
@@ -68,7 +69,7 @@ class _EventPageState extends State<EventPage> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           //mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text("Yohohoho")]
+          children: testEventList
         )
     )
       ),

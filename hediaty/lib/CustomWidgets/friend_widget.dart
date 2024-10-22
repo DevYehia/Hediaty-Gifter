@@ -21,7 +21,7 @@ class FriendWidget extends StatelessWidget{
   Widget build(BuildContext context) {
     String upcomingEventsMsg = "Events: $upcomingEvents";
     Padding displayedImage = Padding(padding: EdgeInsets.all(paddingPixels),
-    child: Icon(Icons.photo_size_select_actual_rounded));
+    child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/youssef.jpeg")));
 
     return InkWell(
         child: Row(children: [
