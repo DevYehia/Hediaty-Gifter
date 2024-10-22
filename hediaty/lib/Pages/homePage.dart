@@ -21,11 +21,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  List<FriendWidget> testFriendList = <FriendWidget>[];
+
   @override
   Widget build(BuildContext context) {
 
-    
-    List<FriendWidget> testFriendList = List<FriendWidget>.filled(20,const FriendWidget(friendName: "Youssef"),growable: false);
+    final TextEditingController newFriendName = TextEditingController();
+
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +45,38 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: <Widget>[
           SearchBar(leading: Icon(Icons.search)),
           IconButton(
-            onPressed: (){print("Oi Stop");},
+            onPressed: (){//setState(() {
+              print("Oi Stop"); 
+              showDialog(context: context, builder:  (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Add Friend'),
+                  content: TextField(
+                    controller: newFriendName,
+                    decoration: InputDecoration(hintText: 'Enter friend\'s name'),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          String friendName = newFriendName.text;
+                          // Handle adding the friend (e.g., API call)
+                          testFriendList.add(FriendWidget(friendName: friendName));
+                          print('Adding friend: $friendName');
+                        });
+                        Navigator.of(context).pop(); // Close the dialog           
+                      },
+                      child: Text('Add'),
+                    ),
+                  ],
+                );
+              },);
+            },
             tooltip: "Add Friend",
             icon: const Icon(Icons.add)),
         ],
