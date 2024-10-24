@@ -7,6 +7,7 @@
 All of which are aligned horizontally
 */
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 //***For the Future***
 //When making real-time upcoming events updates
@@ -33,13 +34,13 @@ class EventWidget extends StatelessWidget{
             ),  
             Padding(
               padding: EdgeInsets.all(paddingPixels),
-              child: Text(eventDate.toLocal().toString(), style: TextStyle(color:Colors.red))
+              child: Text(DateFormat.yMd().format(eventDate), style: TextStyle(color:Colors.red))
             ),]
         )
         ),
         Container(child: Row(children: [
-        FloatingActionButton(onPressed: (){print("prseddd");}, child: Text("Edit"),),
-        FloatingActionButton(onPressed: (){print("prseddd");}, child: Text("Del"),),
+        IconButton(onPressed: (){print("prseddd");}, icon:Icon(Icons.edit)),
+        IconButton(onPressed: (){print("prseddd");}, icon:Icon(Icons.clear)),
         ])
         )
         ]

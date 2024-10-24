@@ -13,27 +13,36 @@ import 'package:flutter/material.dart';
 class FriendWidget extends StatelessWidget{
   //Image? friendImage;
   final String friendName;
-  final int upcomingEvents = 0;
+  final int upcomingEvents = 2;
   final double paddingPixels = 16;
   const FriendWidget({super.key, required this.friendName});
   
   @override
   Widget build(BuildContext context) {
-    String upcomingEventsMsg = "Events: $upcomingEvents";
-    Padding displayedImage = Padding(padding: EdgeInsets.all(paddingPixels),
-    child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/youssef.jpeg")));
+
+    late Padding displayedImage;
+    if(upcomingEvents != 0 ){
+      displayedImage = Padding(padding: EdgeInsets.all(paddingPixels),
+      child: Badge.count(
+        count: upcomingEvents,
+        child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/youssef.jpeg"))
+        )
+      );
+    }
+    else{
+      displayedImage = Padding(padding: EdgeInsets.all(paddingPixels),
+        child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/youssef.jpeg"))
+      );
+    }
 
     return InkWell(
         child: Row(children: [
-        displayedImage,
-        Padding(
-            padding: EdgeInsets.all(paddingPixels),
-            child: Text(friendName, style: TextStyle(color:Colors.blue,fontFamily: "", fontSize: 24)),
-        ),  
-        Padding(
-            padding: EdgeInsets.all(paddingPixels),
-            child: Text(upcomingEventsMsg, style: TextStyle(color:Colors.red))
-        )]
+          displayedImage,
+          Padding(
+              padding: EdgeInsets.all(paddingPixels),
+              child: Text(friendName, style: TextStyle(color:Colors.blue,fontFamily: "", fontSize: 24)),
+          ),  
+          ]
         ),
         onTap: (){print("Hello jj");}
         );
