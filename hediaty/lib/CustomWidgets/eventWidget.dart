@@ -7,6 +7,7 @@
 All of which are aligned horizontally
 */
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/event.dart';
 import 'package:intl/intl.dart';
 
 //***For the Future***
@@ -15,11 +16,9 @@ import 'package:intl/intl.dart';
 
 class EventWidget extends StatelessWidget{
   //Image? friendImage;
-  final String eventName;
-  final DateTime eventDate;
-  final String category;
+  final Event event;
   final double paddingPixels = 16;
-  const EventWidget({super.key, required this.eventName, required this.eventDate, required this.category});
+  const EventWidget({super.key, required this.event});
   
   @override
   Widget build(BuildContext context) {
@@ -30,16 +29,16 @@ class EventWidget extends StatelessWidget{
           child: Row( 
             children: [Padding(
               padding: EdgeInsets.all(paddingPixels),
-              child: Text(eventName, style: TextStyle(color:Colors.blue,fontFamily: "", fontSize: 24)),
+              child: Text(event.eventName, style: TextStyle(color:Colors.blue,fontFamily: "", fontSize: 24)),
             ),  
             Padding(
               padding: EdgeInsets.all(paddingPixels),
-              child: Text(DateFormat.yMd().format(eventDate), style: TextStyle(color:Colors.red))
+              child: Text(DateFormat.yMd().format(event.eventDate), style: TextStyle(color:Colors.red))
             ),]
         )
         ),
         Container(child: Row(children: [
-        IconButton(onPressed: (){print("prseddd");}, icon:Icon(Icons.edit)),
+        IconButton(onPressed: (){print(event.eventID);}, icon:Icon(Icons.edit)),
         IconButton(onPressed: (){print("prseddd");}, icon:Icon(Icons.clear)),
         ])
         )

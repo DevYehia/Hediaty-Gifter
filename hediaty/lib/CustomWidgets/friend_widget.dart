@@ -5,6 +5,7 @@
 All of which are aligned horizontally
 */
 import 'package:flutter/material.dart';
+import '../Models/friend.dart';
 
 //***For the Future***
 //When making real-time upcoming events updates
