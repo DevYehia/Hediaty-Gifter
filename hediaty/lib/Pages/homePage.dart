@@ -8,10 +8,10 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-
+List<FriendWidget> testFriendList = <FriendWidget>[FriendWidget(friendName: "Youssef")];
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<FriendWidget> testFriendList = <FriendWidget>[FriendWidget(friendName: "Youssef")];
+
 
   @override
   Widget build(BuildContext context) {

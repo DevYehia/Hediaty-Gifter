@@ -41,7 +41,7 @@ class FriendWidget extends StatelessWidget{
           displayedImage,
           Padding(
               padding: EdgeInsets.all(paddingPixels),
-              child: Text(friendName, style: TextStyle(color:Colors.blue,fontFamily: "", fontSize: 24)),
+              child: Text(friendName, style: TextStyle(color:Colors.blue,fontFamily: "Merienda", fontSize: 24)),
           ),  
           ]
         ),

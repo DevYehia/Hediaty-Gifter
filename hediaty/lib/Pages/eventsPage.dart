@@ -18,7 +18,7 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
 
-    List<EventWidget> testEventList = List<EventWidget>.filled(20,EventWidget(event: Event("Nkset 24", DateTime.now(), "Sadness")),growable: false);
+    List<EventWidget> testEventList = List<EventWidget>.filled(5,EventWidget(event: Event("Nkset 24", DateTime.now(), "Sadness")),growable: false);
     return Scaffold(
       appBar: AppBar(
         //The app's icon
