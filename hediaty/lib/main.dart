@@ -14,12 +14,49 @@ void initDB() async{
   // constructed for each platform.
 
 
-  join(await getDatabasesPath(), '.db'),
+  join(await getDatabasesPath(), 'hediaty.db'),
   // When the database is first created, create a table to store dogs.
   onCreate: (db, version) {
     // Run the CREATE TABLE statement on the database.
     return db.execute(
-      'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER)',
+      '''CREATE TABLE Users(
+         ID INTEGER PRIMARY KEY, 
+         name TEXT not null, 
+         email TEXT not null
+         );
+
+         CREATE TABLE Events(
+         ID INTEGER PRIMARY KEY, 
+         name TEXT not null,
+         date DATETIME not null, 
+         location TEXT not null, 
+         description TEXT, 
+         userID integer,
+         FOREIGN KEY(userID) REFERENCES Users(ID) ON DELETE CASCADE
+         );
+
+         CREATE TABLE Gifts(
+         ID INTEGER PRIMARY KEY,
+         name TEXT not null,
+         description TEXT,
+         category TEXT not null,
+         price DOUBLE not null,
+         isPledged BOOL,
+         eventID integer,
+         pledgerID integer,
+         FOREIGN KEY(eventID) REFERENCES Events(ID) ON DELETE CASCADE,
+         FOREIGN KEY(pledgerID) REFERENCES Users(ID) ON DELETE CASCADE
+         );
+
+         CREATE TABLE Friends(
+         userID integer,
+         friendID integer,
+         FOREIGN KEY(userID) REFERENCES Users(id),
+         FOREIGN KEY(friendID) REFERENCES Users(id),
+         PRIMARY KEY(userID,friendID)         
+         )
+         
+      ''',
     );
   },
   // Set the version. This executes the onCreate function and provides a
