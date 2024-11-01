@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Pages/profilePage.dart';
 import '../CustomWidgets/friend_widget.dart';
 import 'eventsPage.dart';
@@ -14,12 +15,10 @@ class MyMainPage extends StatefulWidget {
 }
 
 class _MyMainPageState extends State<MyMainPage> {
-
   int navCurrIndex = 0;
   StatefulWidget selectedPage = MyHomePage(title: "Your Friends");
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: selectedPage,
       bottomNavigationBar: NavigationBar(

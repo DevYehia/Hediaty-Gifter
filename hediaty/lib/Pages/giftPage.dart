@@ -2,14 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/giftWidget.dart';
 import 'package:hediaty/Models/gift.dart';
 
-class GiftPage extends StatelessWidget{
+
+class GiftPage extends StatefulWidget{
   final String title;
+  final int eventID;
+  GiftPage({required this.title, required this.eventID});
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return GiftState();
+  }
+}
 
-  //to-do
-  //get the list from the database
-  List<Gift> eventsGiftList = <Gift>[];
-  GiftPage({required this.title, required this.eventsGiftList});
 
+
+class GiftState extends State<GiftPage>{
+
+
+  List<GiftWidget> giftList = [];
+
+  Future setGiftWidgets() async{
+    List<Gift> giftModelList = await Gift.getAllGifts(widget.eventID);
+    giftList = giftModelList.map((gift) => GiftWidget(gift: gift),).toList();
+  }
   @override
   Widget build(BuildContext context){
 
@@ -24,14 +39,26 @@ class GiftPage extends StatelessWidget{
         backgroundColor: Colors.purple,
         // Here we take the value from the EventPage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(this.title),
+        title: Text(widget.title),
 
       ),
-      body:  SingleChildScrollView(
-        child: Column(children:
-          eventsGiftList.map((gift) => GiftWidget(gift: gift),).toList()
-        )
-      )
-    );
+      body: FutureBuilder(
+            future: setGiftWidgets(),
+            builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.done){
+                if(snapshot.hasError){
+                    return Text("error: ${snapshot.error}");
+                }
+                return  SingleChildScrollView(
+                          child: Center( child: Column(
+                            children: giftList
+                          )
+                          )
+                );
+              }
+              return Text("Hello");
+            }
+          )
+      );
   }
 }

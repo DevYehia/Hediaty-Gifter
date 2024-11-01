@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/CustomWidgets/eventWidget.dart';
+import 'package:hediaty/Models/user.dart';
 import '../CustomWidgets/friend_widget.dart';
 class EventPage extends StatefulWidget {
   const EventPage({super.key, required this.title});
@@ -14,11 +15,22 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
 
+
+
+    List<EventWidget> eventList = [];
+
+    Future setEventList() async{
+      List<Event> rawEventList = await Event.getAllEvents(loggedInUser.userID);
+      eventList = rawEventList.map((event) => EventWidget(event: event)).toList();
+      return eventList;
+    }
+  //to-do get logged in user properly
+  User loggedInUser = User.fromID(1);
   int navCurrIndex = 0;
   @override
   Widget build(BuildContext context) {
 
-    List<EventWidget> testEventList = List<EventWidget>.filled(5,EventWidget(event: Event("Nkset 24", DateTime.now(), "Sadness")),growable: false);
+
     return Scaffold(
       appBar: AppBar(
         //The app's icon
@@ -39,26 +51,23 @@ class _EventPageState extends State<EventPage> {
             icon: const Icon(Icons.add)),
         ],
       ),
-      body:  SingleChildScrollView(
-        child: Center( child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          //mainAxisAlignment: MainAxisAlignment.center,
-          children: testEventList
-        )
-    )
-      ),
+      body:  FutureBuilder(
+            future: setEventList(),
+            builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.done){
+                if(snapshot.hasError){
+                    return Text("error: ${snapshot.error}");
+                }
+                return  SingleChildScrollView(
+                          child: Center( child: Column(
+                            children: eventList
+                          )
+                          )
+                );
+              }
+              return Text("Hello");
+            }
+          )
     );
   }
 }

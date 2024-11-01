@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/user.dart';
 import '../CustomWidgets/friend_widget.dart';
 import '../Pages/eventsPage.dart';
 class MyHomePage extends StatefulWidget {
@@ -8,14 +9,29 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-List<FriendWidget> testFriendList = <FriendWidget>[FriendWidget(friendName: "Youssef")];
+
 class _MyHomePageState extends State<MyHomePage> {
+
+  //to-do
+  //get logged-in user from somewhere
+  User loggedInUser = User.fromID(1);
+  late List<FriendWidget> friendList = [];
+
+  void initFriendsList() async{
+    List<User> friendModelList = await loggedInUser.getAllFriends();
+    friendList = friendModelList.map((friend) => FriendWidget(friendName: friend.userName),).toList();
+
+    //rerender page in case page rendered before friends update
+    setState(() {
+      
+    });
+  }
 
 
 
   @override
   Widget build(BuildContext context) {
-
+    initFriendsList();
     final TextEditingController newFriendNameController = TextEditingController();
     SearchDelegate idk;
     return Scaffold(
@@ -56,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         setState(() {
                           String friendName = newFriendNameController.text;
                           // Handle adding the friend (e.g., API call)
-                          testFriendList.add(FriendWidget(friendName: friendName));
+                          friendList.add(FriendWidget(friendName: friendName));
                           print('Adding friend: $friendName');
                         });
                         Navigator.of(context).pop(); // Close the dialog           
@@ -73,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body:  SingleChildScrollView(
         child: Column(
-          children: testFriendList
+          children: friendList
     )
       ),
     );

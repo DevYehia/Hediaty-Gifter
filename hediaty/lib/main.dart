@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hediaty/Pages/mainPage.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart'; //remove when deploying
 
+
+//create database tables when database is first created
 void initDB() async{
   WidgetsFlutterBinding.ensureInitialized();
-  databaseFactory = databaseFactoryFfi;
+  databaseFactory = databaseFactoryFfi; //remove when deploying
   print(await getDatabasesPath());
   final database = openDatabase(
   // Set the path to the database. Note: Using the `join` function from the
@@ -29,6 +31,7 @@ void initDB() async{
          ID INTEGER PRIMARY KEY, 
          name TEXT not null,
          date DATETIME not null, 
+         category TEXT not null,
          location TEXT not null, 
          description TEXT, 
          userID integer,
