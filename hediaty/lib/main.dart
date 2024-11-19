@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/Pages/mainPage.dart';
+import 'package:hediaty/Pages/LoginPage.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; //remove when deploying
@@ -82,7 +83,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Gifter',
-      home: MyMainPage(title: 'Gifter'),
+      home: LoginPage(),
     );
   }
 }
