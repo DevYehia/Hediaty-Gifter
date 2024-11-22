@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/Pages/mainPage.dart';
 
@@ -13,10 +14,24 @@ class SignUpPage extends StatefulWidget{
 }
 
 class SignUpPageState extends State<SignUpPage>{
+
+  void addUserToFirebaseAuth(String email, String password) async{
+    var user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
 
     var globalFormKey = GlobalKey<FormState>();
+    final nameController = TextEditingController();
+    final phoneController = TextEditingController();
+    final emailController = TextEditingController();
+    final passController = TextEditingController();
+    final confirmPassController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -50,34 +65,91 @@ class SignUpPageState extends State<SignUpPage>{
                 key: globalFormKey,
                 child: Column(
                   children: [
+
+                    //Name Field
                     TextFormField(
+                      controller: nameController,
                       decoration: InputDecoration(
-                        labelText: "Mail",
+                        labelText: "Name",
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Name';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    //phone field
+                    TextFormField(
+                      controller: phoneController,
+                      decoration: InputDecoration(
+                        labelText: "Phone",
+                        hintText: ""
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your phone number';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    //Mail Field
+                    TextFormField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        labelText: "Email",
+                        hintText: ""
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        return null;
+                      },
+                    ),
+                    //password field
+                    TextFormField(
+                      controller: passController,
+                      decoration: InputDecoration(
+                        labelText: "Password",
                         hintText: "example@gmail.com"
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
+                          return 'Please enter your Password';
                         }
                         return null;
                       },
                     ),
+
+                    //Confirm Password Field
                     TextFormField(
+                      controller: confirmPassController,
                       decoration: InputDecoration(
-                        labelText: "Password",
+                        labelText: "Confirm Password",
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
+                          return 'Please enter your Password';
                         }
                         return null;
                       },
                     ),
+
+                    //sign-up button
                     Container(
                       padding: EdgeInsets.only(top: 50),
                       child: ElevatedButton(onPressed: (){
                       if(globalFormKey.currentState!.validate()){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyMainPage(title: "Gifter")));
+                        //add user to firebase Auth and Firebase RealTime Database
+                        addUserToFirebaseAuth(emailController.text, passController.text);
+
+
+
+
+                        //Navigator.push(context, MaterialPageRoute(builder: (context) => MyMainPage(title: "Gifter")));
                       }
                     }, 
                     child: Text("SignUp"))
