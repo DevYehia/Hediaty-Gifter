@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/Pages/mainPage.dart';
 import 'package:hediaty/Pages/LoginPage.dart';
@@ -6,11 +8,29 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; //remove when deploying
 
 
+
+//test Firebase Connection
+
+Future<void> testFire() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  final ref = FirebaseDatabase.instance.ref();
+  final userId = 1;
+  final snapshot = await ref.child('Users/$userId').get();
+  if (snapshot.exists) {
+      print(snapshot.value);
+  } else {
+      print('No data available.');
+  }
+}
+
+
+
 //create database tables when database is first created
 void initDB() async{
   WidgetsFlutterBinding.ensureInitialized();
   databaseFactory = databaseFactoryFfi; //remove when deploying
-  print(await getDatabasesPath());
+  //print(await getDatabasesPath());
   final database = openDatabase(
   // Set the path to the database. Note: Using the `join` function from the
   // `path` package is best practice to ensure the path is correctly
@@ -70,7 +90,8 @@ void initDB() async{
 }
 
 void main() async{
-  initDB();
+  await testFire();
+  //initDB();
   runApp(const MyApp());
 }
 

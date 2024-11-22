@@ -40,6 +40,9 @@ dependencies:
   path: ^1.9.0
   sqflite_common_ffi: ^2.3.4
   sqlite3_flutter_libs: ^0.5.26
+  firebase_database: ^11.1.6
+  firebase_core: ^3.8.0
+  firebase_auth: ^5.3.3
 
 dev_dependencies:
   flutter_test:
