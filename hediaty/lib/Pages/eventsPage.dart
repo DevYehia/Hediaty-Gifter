@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/CustomWidgets/eventWidget.dart';
 import 'package:hediaty/Models/user.dart';
@@ -20,12 +22,15 @@ class _EventPageState extends State<EventPage> {
     List<EventWidget> eventList = [];
 
     Future setEventList() async{
-      List<Event> rawEventList = await Event.getAllEvents(loggedInUser.userID);
+      UserModel? loggedInUser = await LoggedUser.getLoggedUser();
+
+      //To-do
+      //get user events locally
+      List<Event> rawEventList = [];
       eventList = rawEventList.map((event) => EventWidget(event: event)).toList();
       return eventList;
     }
-  //to-do get logged in user properly
-  User loggedInUser = User.fromID(1);
+
   int navCurrIndex = 0;
   @override
   Widget build(BuildContext context) {

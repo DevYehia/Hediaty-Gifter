@@ -2,58 +2,62 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:hediaty/Models/DBManager.dart';
 import 'package:hediaty/Models/event.dart';
 
-class User{
-  int userID;
+class UserModel{
+  String userID;
   late String userName;
   late String email;  
   //late Stirng 
-  User({required this.userID, required this.userName, required this.email});
+  UserModel({required this.userID, required this.userName, required this.email});
 
-  User.fromID(this.userID);
+  UserModel.fromID(this.userID);
 
-  void initUserByID() async{
+  void initUserModelByID() async{
     final database = await DBManager.getDataBase();
     List<Map> user = await database.rawQuery("SELECT * FROM USERS WHERE id = $userID");
     this.userName = user[0]["name"];
     this.userName = user[0]["email"];
   }
 
+  Future<void> initUserModelByIDFirebase() async{
+    final ref = FirebaseDatabase.instance.ref();
+    final user = await ref.child("Users/$userID").get();
+    Map userMap = user.value as Map;
+    this.userName = userMap["name"];
+    this.email = userMap["email"];
+  }
 
-  Future<List<User>> getAllFriends() async{
-    List<User> friends = [];
+
+  Future<List<UserModel>> getAllFriends() async{
+    List<UserModel> friends = [];
     final database = await DBManager.getDataBase();
     List<Map> rawFriends = await database.rawQuery("SELECT * FROM USERS WHERE id in (SELECT friendID from FRIENDS where userID = $userID)");
     for(final rawFriend in rawFriends){
-      friends.add(User(userID: rawFriend["ID"], userName: rawFriend["name"], email: rawFriend["email"]));
+      friends.add(UserModel(userID: rawFriend["ID"], userName: rawFriend["name"], email: rawFriend["email"]));
     }
     return friends;
   }
 
-  Future<List<User>> getAllFriendsFirebase() async{
-    List<User> friends = [];
+  Future<List<UserModel>> getAllFriendsFirebase() async{
+    List<UserModel> friends = [];
     final ref = FirebaseDatabase.instance.ref();
 
-    //access friends of current User
+    //access friends of current UserModel
     final rawFriends = await ref.child("Users/$userID/friends").get();
 
     //loop over the children i.e.: the friend's ids as keys    
     for(final rawFriend in rawFriends.children){
-      print("Key is ${rawFriend.key}");
-
       //get friend's data
       //NOTE: this line doesn't read the friend's list correctly
       //DO NOT USE TO READ FRIENDS
       var friendData = await ref.child("Users/${rawFriend.key}").get();
-      //print(friendData.value);
       Map friendMap = friendData.value as Map;
-      //print("friend Map is $friendMap");
-      friends.add(User(userID: int.parse(rawFriend.key!), userName: friendMap["name"], email: friendMap["email"]));
+      friends.add(UserModel(userID: rawFriend.key!, userName: friendMap["name"], email: friendMap["email"]));
     }
     return friends;
   }
 
 
-    static Future<int> checkUserExistsByPhone(String phoneNumber) async{
+    static Future<String> getUserIDByPhone(String phoneNumber) async{
       final ref = FirebaseDatabase.instance.ref();
       final usersData = await ref.child("Users").get();
       if (usersData.exists) {
@@ -61,21 +65,21 @@ class User{
             Map userMap = userData.value as Map;
             //may need to change phone comparison
             if(userMap["phone"] == phoneNumber){
-              return int.parse(userData.key!);
+              return userData.key!;
             }
             
           }
       }
-      return -1;
+      return "";
 
     }
 
-    static Future<bool> checkFriendshipStatus(int userID, int friendID) async{
+    static Future<bool> checkFriendshipStatus(String userID, String friendID) async{
       final ref = FirebaseDatabase.instance.ref();
       final userFriends = await ref.child("Users/$userID/friends").get();
       if(userFriends.exists){
         for(var friend in userFriends.children){
-          int DBFriendID = int.parse(friend.key!);
+          String DBFriendID = friend.key!;
           if(DBFriendID == friendID){
 
             //users are friends
@@ -87,10 +91,10 @@ class User{
       return false;
     }
 
-    static Future<bool> addFriend(int userID ,String friendPhoneNumber) async{
+    static Future<bool> addFriend(String userID ,String friendPhoneNumber) async{
 
-      int friendID  = await checkUserExistsByPhone(friendPhoneNumber);
-      if(friendID == -1){ //friend not found
+      String friendID  = await getUserIDByPhone(friendPhoneNumber);
+      if(friendID == ""){ //friend not found
         return false;
       }
       bool freindshipStatus = await checkFriendshipStatus(userID, friendID);
@@ -100,14 +104,33 @@ class User{
 
       //add friend to user's friends
       var ref = FirebaseDatabase.instance.ref("Users/$userID/friends");
-      await ref.update({friendID.toString(): ""});      
+      await ref.update({friendID: ""});      
 
       //add user to friends's friends
       ref = FirebaseDatabase.instance.ref("Users/$friendID/friends");
-      await ref.update({userID.toString(): ""});            
+      await ref.update({userID: ""});            
 
 
       return true; 
+
+    }
+
+
+    static Future<String> getUserIDByEmail(String email) async{
+      final ref = FirebaseDatabase.instance.ref();
+      final usersData = await ref.child("Users").get();
+      if (usersData.exists) {
+          for(var userData in usersData.children){
+            Map userMap = userData.value as Map;
+            //may need to change phone comparison
+            if(userMap["email"] == email){
+              return userData.key!;
+            }
+            
+          }
+      }
+      return "";      
+
 
     }
 

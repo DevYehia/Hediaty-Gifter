@@ -1,9 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/user.dart';
 import '../CustomWidgets/friend_widget.dart';
 import '../Pages/eventsPage.dart';
-import "../Models/userFirebase.dart";
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -14,17 +15,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  //to-do
-  //get logged-in user from somewhere
-  User loggedInUser = User.fromID(1);
+
   late List<FriendWidget> friendList = [];
 
-
-
-
-
   Future<void> initFriendsList() async{
-    List<User> friendModelList = await loggedInUser.getAllFriendsFirebase();
+    print("email is ${FirebaseAuth.instance.currentUser!.email!}");
+    UserModel loggedInUser = await LoggedUser.getLoggedUser();
+    List<UserModel> friendModelList = await loggedInUser.getAllFriendsFirebase();
     friendList = friendModelList.map((friend) => FriendWidget(friendName: friend.userName),).toList();
     print(friendList);
   }
@@ -71,7 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     TextButton(
                       onPressed: () async{
                           String friendPhone = newFriendNameController.text;
-                          await User.addFriend(1,friendPhone);
+                          UserModel loggedInUser = await LoggedUser.getLoggedUser();
+                          await UserModel.addFriend(loggedInUser.userID,friendPhone);
                           await initFriendsList();                       
                         setState(() {
 

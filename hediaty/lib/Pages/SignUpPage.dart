@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/Pages/mainPage.dart';
 
@@ -15,11 +16,21 @@ class SignUpPage extends StatefulWidget{
 
 class SignUpPageState extends State<SignUpPage>{
 
-  void addUserToFirebaseAuth(String email, String password) async{
+  Future<void> addUserToFirebaseAuth(String email, String password) async{
     var user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
   }
 
+  
+  Future<void> addUsertoFirebaseDB(String name, String phone, String email) async{
 
+    var userListRef = FirebaseDatabase.instance.ref("Users");
+    var newUserRef = userListRef.push();
+    newUserRef.set({
+      "email" : email,
+      "name" : name,
+      "phone" : phone
+    });
+  }
 
 
 
@@ -141,11 +152,11 @@ class SignUpPageState extends State<SignUpPage>{
                     //sign-up button
                     Container(
                       padding: EdgeInsets.only(top: 50),
-                      child: ElevatedButton(onPressed: (){
+                      child: ElevatedButton(onPressed: () async{
                       if(globalFormKey.currentState!.validate()){
                         //add user to firebase Auth and Firebase RealTime Database
-                        addUserToFirebaseAuth(emailController.text, passController.text);
-
+                        await addUserToFirebaseAuth(emailController.text, passController.text);
+                        await addUsertoFirebaseDB(nameController.text, phoneController.text, emailController.text);
 
 
 
