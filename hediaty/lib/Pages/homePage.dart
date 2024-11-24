@@ -1,7 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/Models/user.dart';
 import '../CustomWidgets/friend_widget.dart';
 import '../Pages/eventsPage.dart';
+import "../Models/userFirebase.dart";
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -17,23 +19,22 @@ class _MyHomePageState extends State<MyHomePage> {
   User loggedInUser = User.fromID(1);
   late List<FriendWidget> friendList = [];
 
-  void initFriendsList() async{
-    List<User> friendModelList = await loggedInUser.getAllFriends();
-    friendList = friendModelList.map((friend) => FriendWidget(friendName: friend.userName),).toList();
 
-    //rerender page in case page rendered before friends update
-    setState(() {
-      
-    });
+
+
+
+  Future<void> initFriendsList() async{
+    List<User> friendModelList = await loggedInUser.getAllFriendsFirebase();
+    friendList = friendModelList.map((friend) => FriendWidget(friendName: friend.userName),).toList();
+    print(friendList);
   }
 
 
 
   @override
   Widget build(BuildContext context) {
-    initFriendsList();
+    //initFriendsList();
     final TextEditingController newFriendNameController = TextEditingController();
-    SearchDelegate idk;
     return Scaffold(
       appBar: AppBar(
         //The app's icon
@@ -58,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: Text('Add Friend'),
                   content: TextField(
                     controller: newFriendNameController,
-                    decoration: InputDecoration(hintText: 'Enter friend\'s name'),
+                    decoration: InputDecoration(hintText: 'Enter friend\'s Phone Number'),
                   ),
                   actions: [
                     TextButton(
@@ -68,12 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Text('Cancel'),
                     ),
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async{
+                          String friendPhone = newFriendNameController.text;
+                          await User.addFriend(1,friendPhone);
+                          await initFriendsList();                       
                         setState(() {
-                          String friendName = newFriendNameController.text;
+
                           // Handle adding the friend (e.g., API call)
-                          friendList.add(FriendWidget(friendName: friendName));
-                          print('Adding friend: $friendName');
+                          
                         });
                         Navigator.of(context).pop(); // Close the dialog           
                       },
@@ -87,11 +90,23 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.add)),
         ],
       ),
-      body:  SingleChildScrollView(
-        child: Column(
-          children: friendList
-    )
-      ),
+      body:  FutureBuilder(
+        future: initFriendsList(), 
+        builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.done){
+                if(snapshot.hasError){
+                    return Text("error: ${snapshot.error}");
+                }
+                return  SingleChildScrollView(
+                          child: Center( child: Column(
+                            children: friendList
+                          )
+                          )
+                );
+              }
+              return Text("Hello");
+            }
+      )
     );
   }
 }
