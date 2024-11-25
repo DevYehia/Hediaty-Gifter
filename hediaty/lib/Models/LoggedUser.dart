@@ -6,7 +6,7 @@ class LoggedUser{
   static UserModel? loggedUser;
   LoggedUser._();
 
-  static Future<UserModel> getLoggedUser() async{
+  static UserModel getLoggedUser(){
     return loggedUser!;
   }
 

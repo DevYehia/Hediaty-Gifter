@@ -19,11 +19,11 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<FriendWidget> friendList = [];
 
   Future<void> initFriendsList() async{
-    print("email is ${FirebaseAuth.instance.currentUser!.email!}");
-    UserModel loggedInUser = await LoggedUser.getLoggedUser();
+    //print("email is ${FirebaseAuth.instance.currentUser!.email!}");
+    UserModel loggedInUser = LoggedUser.getLoggedUser();
     List<UserModel> friendModelList = await loggedInUser.getAllFriendsFirebase();
     friendList = friendModelList.map((friend) => FriendWidget(friendName: friend.userName),).toList();
-    print(friendList);
+    //print(friendList);
   }
 
 
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     TextButton(
                       onPressed: () async{
                           String friendPhone = newFriendNameController.text;
-                          UserModel loggedInUser = await LoggedUser.getLoggedUser();
+                          UserModel loggedInUser = LoggedUser.getLoggedUser();
                           await UserModel.addFriend(loggedInUser.userID,friendPhone);
                           await initFriendsList();                       
                         setState(() {

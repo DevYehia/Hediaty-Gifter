@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hediaty/CustomWidgets/eventCreationDialog.dart';
+import 'package:hediaty/Models/DBManager.dart';
 import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/CustomWidgets/eventWidget.dart';
@@ -22,11 +24,15 @@ class _EventPageState extends State<EventPage> {
     List<EventWidget> eventList = [];
 
     Future setEventList() async{
-      UserModel? loggedInUser = await LoggedUser.getLoggedUser();
+
+      /*UNCOMMENT TO DELETE ALL EVENTS*/
+      //var db = await DBManager.getDataBase();
+      //await db.rawQuery("DELETE FROM EVENTS");
+      UserModel? loggedInUser = LoggedUser.getLoggedUser();
 
       //To-do
       //get user events locally
-      List<Event> rawEventList = [];
+      List<Event> rawEventList = await Event.getAllEvents(loggedInUser.userID);
       eventList = rawEventList.map((event) => EventWidget(event: event)).toList();
       return eventList;
     }
@@ -51,7 +57,10 @@ class _EventPageState extends State<EventPage> {
 
         actions: <Widget>[
           IconButton(
-            onPressed: (){print("Oi Stop");},
+            onPressed: (){showDialog(context: context, builder: (BuildContext context){
+              return EventCreationDialog();
+            }
+            );},
             tooltip: "Add Event",
             icon: const Icon(Icons.add)),
         ],

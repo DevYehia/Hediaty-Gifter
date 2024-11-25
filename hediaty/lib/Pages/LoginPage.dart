@@ -17,7 +17,7 @@ class LoginPage extends StatefulWidget{
 
 class LoginPageState extends State<LoginPage>{
 
-  void authAndRedirect (String email, String password) async{
+  Future<void> authAndRedirect (String email, String password) async{
 
     try{
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -96,9 +96,9 @@ class LoginPageState extends State<LoginPage>{
                     ),
                     Container(
                       padding: EdgeInsets.only(top: 50),
-                      child: ElevatedButton(onPressed: (){
+                      child: ElevatedButton(onPressed: () async{
                       if(globalFormKey.currentState!.validate()){
-                        authAndRedirect(emailController.text, passController.text);
+                        await authAndRedirect(emailController.text, passController.text);
                       }
                     }, 
                     child: Text("Login"))

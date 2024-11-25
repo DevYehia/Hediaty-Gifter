@@ -25,7 +25,7 @@ class SignUpPageState extends State<SignUpPage>{
 
     var userListRef = FirebaseDatabase.instance.ref("Users");
     var newUserRef = userListRef.push();
-    newUserRef.set({
+    await newUserRef.set({
       "email" : email,
       "name" : name,
       "phone" : phone
