@@ -22,7 +22,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //print("email is ${FirebaseAuth.instance.currentUser!.email!}");
     UserModel loggedInUser = LoggedUser.getLoggedUser();
     List<UserModel> friendModelList = await loggedInUser.getAllFriendsFirebase();
-    friendList = friendModelList.map((friend) => FriendWidget(friendName: friend.userName),).toList();
+    friendList = friendModelList.map((friend) => FriendWidget(friendName: friend.userName, eventCount: friend.eventCount,),).toList();
     //print(friendList);
   }
 
@@ -91,6 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body:  FutureBuilder(
         future: initFriendsList(), 
         builder: (context, snapshot){
+
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator()); 
+              }
               if(snapshot.connectionState == ConnectionState.done){
                 if(snapshot.hasError){
                     return Text("error: ${snapshot.error}");

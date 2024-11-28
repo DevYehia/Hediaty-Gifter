@@ -25,6 +25,45 @@ Future<void> testFire() async{
 }
 
 
+//call this functioon whenever a database reset like changing table structures is needed
+Future<void> resetLocalDB() async{
+
+    final database =await DBManager.getDataBase();
+    try{
+        await database.execute("DROP TABLE EVENTS");
+        await database.execute("DROP TABLE GIFTS");
+    }
+    catch (e){
+
+    }
+    await database.execute(      '''
+            CREATE TABLE Events(
+            ID TEXT PRIMARY KEY, 
+            name TEXT not null,
+            date TEXT not null, 
+            category TEXT not null,
+            location TEXT not null, 
+            description TEXT, 
+            userID TEXT
+            );
+            
+        ''');
+        await database.execute('''
+            CREATE TABLE Gifts(
+            ID TEXT PRIMARY KEY,
+            name TEXT not null,
+            description TEXT,
+            category TEXT not null,
+            price DOUBLE not null,
+            isPledged BOOL,
+            eventID TEXT,
+            pledgerID TEXT
+            );
+            ''');
+    final tables = await database.rawQuery('SELECT * FROM sqlite_master ORDER BY name;');
+    print(tables);    
+}
+
 
 //create database tables when database is first created
 Future<void> initDB() async{
@@ -32,7 +71,7 @@ Future<void> initDB() async{
 
   WidgetsFlutterBinding.ensureInitialized();
   //print(await getDatabasesPath());
-  final database = openDatabase(
+  final database = await openDatabase(
   // Set the path to the database. Note: Using the `join` function from the
   // `path` package is best practice to ensure the path is correctly
   // constructed for each platform.
@@ -47,7 +86,7 @@ Future<void> initDB() async{
     return db.execute(
       '''
          CREATE TABLE Events(
-         ID INTEGER PRIMARY KEY, 
+         ID TEXT PRIMARY KEY, 
          name TEXT not null,
          date TEXT not null, 
          category TEXT not null,
@@ -57,13 +96,13 @@ Future<void> initDB() async{
          );
 
          CREATE TABLE Gifts(
-         ID INTEGER PRIMARY KEY,
+         ID TEXT PRIMARY KEY,
          name TEXT not null,
          description TEXT,
          category TEXT not null,
          price DOUBLE not null,
          isPledged BOOL,
-         eventID integer,
+         eventID TEXT,
          pledgerID TEXT
          );
          
@@ -74,11 +113,16 @@ Future<void> initDB() async{
   // path to perform database upgrades and downgrades.
   version: 1,
 );
+  //optional stuff for debugging purposes
+
+
+
 }
 
 void main() async{
   await testFire();
   await initDB();
+  //await resetLocalDB();
   runApp(const MyApp());
 }
 

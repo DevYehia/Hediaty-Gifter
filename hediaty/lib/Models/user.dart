@@ -5,9 +5,11 @@ import 'package:hediaty/Models/event.dart';
 class UserModel{
   String userID;
   late String userName;
-  late String email;  
+  late String email;
+  late String phone;
+  late int eventCount;  
   //late Stirng 
-  UserModel({required this.userID, required this.userName, required this.email});
+  UserModel({required this.userID, required this.userName, required this.email, required this.phone, required this.eventCount});
 
   UserModel.fromID(this.userID);
 
@@ -32,7 +34,8 @@ class UserModel{
     final database = await DBManager.getDataBase();
     List<Map> rawFriends = await database.rawQuery("SELECT * FROM USERS WHERE id in (SELECT friendID from FRIENDS where userID = $userID)");
     for(final rawFriend in rawFriends){
-      friends.add(UserModel(userID: rawFriend["ID"], userName: rawFriend["name"], email: rawFriend["email"]));
+      //eventCount should be fixed later
+      friends.add(UserModel(userID: rawFriend["ID"], userName: rawFriend["name"], email: rawFriend["email"], phone: rawFriend["phone"], eventCount: 0));
     }
     return friends;
   }
@@ -51,7 +54,11 @@ class UserModel{
       //DO NOT USE TO READ FRIENDS
       var friendData = await ref.child("Users/${rawFriend.key}").get();
       Map friendMap = friendData.value as Map;
-      friends.add(UserModel(userID: rawFriend.key!, userName: friendMap["name"], email: friendMap["email"]));
+      friends.add(UserModel(userID: rawFriend.key!,
+        userName: friendMap["name"],
+        email: friendMap["email"],
+        phone: friendMap["phone"],
+        eventCount: friendMap["eventCount"]));
     }
     return friends;
   }

@@ -70,8 +70,13 @@ class EventCreationDialog extends StatelessWidget{
                             'description': eventDescriptionController.text,
                             'userID' : LoggedUser.getLoggedUser().userID
                           };
-                          int eventID = await Event.insertEventLocal(eventData);
-                          await Event.insertEventFireBase(eventID, eventData);
+                          //insert to firebase
+                          //get event ID
+                          //insert to local DB
+                          String eventID = await Event.insertEventFireBase(eventData);
+                          eventData["ID"] = eventID;
+                          await Event.insertEventLocal(eventData);
+
                         }
                         Navigator.of(context).pop(); // Close the dialog                        
                       },

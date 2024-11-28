@@ -14,18 +14,18 @@ import '../Models/friend.dart';
 class FriendWidget extends StatelessWidget{
   //Image? friendImage;
   final String friendName;
-  final int upcomingEvents = 2;
+  final int eventCount;
   final double paddingPixels = 16;
-  const FriendWidget({super.key, required this.friendName});
+  const FriendWidget({super.key, required this.friendName, required this.eventCount});
   
   @override
   Widget build(BuildContext context) {
 
     late Padding displayedImage;
-    if(upcomingEvents != 0 ){
+    if(eventCount != 0 ){
       displayedImage = Padding(padding: EdgeInsets.all(paddingPixels),
       child: Badge.count(
-        count: upcomingEvents,
+        count: eventCount,
         child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/youssef.jpeg"))
         )
       );

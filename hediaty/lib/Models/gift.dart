@@ -1,7 +1,7 @@
 import 'package:hediaty/Models/DBManager.dart';
 
 class Gift{
-  int ID;
+  String ID;
   String name;
   String? description;
   String category;
@@ -20,10 +20,10 @@ class Gift{
         });
 
 
-  static Future<List<Gift>> getAllGifts(int eventID) async{
+  static Future<List<Gift>> getAllGifts(String eventID) async{
     List<Gift> gifts = [];
     final db = await DBManager.getDataBase();
-    List<Map> rawGifts = await db.rawQuery("SELECT * FROM GIFTS WHERE eventID = $eventID");
+    List<Map> rawGifts = await db.rawQuery("SELECT * FROM GIFTS WHERE eventID = '$eventID'");
     print(rawGifts);
     for(final rawGift in rawGifts){
       gifts.add(Gift(ID: rawGift["ID"],

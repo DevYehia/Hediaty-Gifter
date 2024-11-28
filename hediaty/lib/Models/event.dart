@@ -2,7 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:hediaty/Models/DBManager.dart';
 
 class Event{
-  int eventID;
+  String eventID;
   String eventName;
   DateTime eventDate;
   String category;
@@ -36,26 +36,23 @@ class Event{
     return events;    
   }
 
-  //function returns Local ID of inserted event
-  static Future<int> insertEventLocal(Map<String, Object?> eventData) async{
+
+  static Future<void> insertEventLocal(Map<String, Object?> eventData) async{
     final db = await DBManager.getDataBase();
-    int eventID = await db.insert("EVENTS",eventData);
-    return eventID;
+    await db.insert("EVENTS",eventData);
   }
 
   //function inserts event into firebase under eventID
   //if eventID is null, function uses push instead of update
-  static Future<void> insertEventFireBase(int? eventID ,Map<String, Object?> eventData) async{
+  static Future<String> insertEventFireBase(Map<String, Object?> eventData) async{
     var eventListRef = FirebaseDatabase.instance.ref("Events");
-    if(eventID != null){
-      await eventListRef.update({
-        eventID.toString(): eventData
-      });
-    }
-    else{
-      var newEventRef = eventListRef.push();
-      await newEventRef.set(eventData);
-    }
+    var newEventRef = eventListRef.push();
+    var userRef = FirebaseDatabase.instance.ref("Users/${eventData["userID"]}");
+    var userMap = (await userRef.get()).value as Map;
+
+    await newEventRef.set(eventData);
+    await userRef.update({"eventCount" : userMap["eventCount"] + 1});
+    return newEventRef.key!;
   }
 
 

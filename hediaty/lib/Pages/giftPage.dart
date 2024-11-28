@@ -5,7 +5,7 @@ import 'package:hediaty/Models/gift.dart';
 
 class GiftPage extends StatefulWidget{
   final String title;
-  final int eventID;
+  final String eventID;
   GiftPage({required this.title, required this.eventID});
   @override
   State<StatefulWidget> createState() {
