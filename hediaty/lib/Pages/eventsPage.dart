@@ -8,10 +8,12 @@ import 'package:hediaty/CustomWidgets/eventWidget.dart';
 import 'package:hediaty/Models/user.dart';
 import '../CustomWidgets/friend_widget.dart';
 class EventPage extends StatefulWidget {
-  const EventPage({super.key, required this.title});
+  const EventPage({super.key, required this.title, required this.isOwner, required this.userID});
 
 
   final String title;
+  final bool isOwner;
+  final String userID;
 
   @override
   State<EventPage> createState() => _EventPageState();
@@ -25,15 +27,18 @@ class _EventPageState extends State<EventPage> {
 
     Future setEventList() async{
 
-      /*UNCOMMENT TO DELETE ALL EVENTS*/
-      //var db = await DBManager.getDataBase();
-      //await db.rawQuery("DELETE FROM EVENTS");
-      UserModel? loggedInUser = LoggedUser.getLoggedUser();
 
-      //To-do
-      //get user events locally
-      List<Event> rawEventList = await Event.getAllEvents(loggedInUser.userID);
-      eventList = rawEventList.map((event) => EventWidget(event: event)).toList();
+
+      //if user is event's owner, get locally otherwise get from firebase
+
+      late List<Event> rawEventList;
+      if(widget.isOwner){
+        rawEventList = await Event.getAllEvents(widget.userID);
+      }
+      else{
+        rawEventList = await Event.get
+      }
+      eventList = rawEventList.map((event) => EventWidget(event: event, isOwner: widget.isOwner,)).toList();
       return eventList;
     }
 
@@ -55,15 +60,21 @@ class _EventPageState extends State<EventPage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
 
-        actions: <Widget>[
+        //display add event button if user owns event
+        actions: widget.isOwner ? 
+        <Widget>[
           IconButton(
             onPressed: (){showDialog(context: context, builder: (BuildContext context){
-              return EventCreationDialog();
+              return EventCreationDialog(setStateCallBack: (){setState(() {
+                
+              });});
             }
-            );},
+            );
+            },
             tooltip: "Add Event",
             icon: const Icon(Icons.add)),
-        ],
+        ]: 
+        null,
       ),
       body:  FutureBuilder(
             future: setEventList(),

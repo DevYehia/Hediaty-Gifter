@@ -20,7 +20,8 @@ class EventWidget extends StatelessWidget{
   //Image? friendImage;
   final Event event;
   final double paddingPixels = 16;
-  const EventWidget({super.key, required this.event});
+  final bool isOwner;
+  const EventWidget({super.key, required this.event, required this.isOwner});
   
   @override
   Widget build(BuildContext context) {
@@ -40,10 +41,12 @@ class EventWidget extends StatelessWidget{
             ),]
         )
         ),
-        Container(child: Row(children: [
+        //display edit and delete buttons only if user owns event
+        Container(child: Row(children: isOwner ? [
         IconButton(onPressed: (){print(event.eventID);}, icon:Icon(Icons.edit)),
         IconButton(onPressed: (){print("prseddd");}, icon:Icon(Icons.clear)),
-        ])
+        ] : 
+        [])
         )
         ]
         ),

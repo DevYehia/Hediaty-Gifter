@@ -7,6 +7,9 @@ class EventCreationDialog extends StatelessWidget{
   final eventNameController = TextEditingController();
   final eventCategoryController = TextEditingController();
   final eventDescriptionController = TextEditingController();
+  final VoidCallback setStateCallBack;
+
+  EventCreationDialog({required this.setStateCallBack});
   @override
   Widget build(BuildContext context) {
 
@@ -76,7 +79,7 @@ class EventCreationDialog extends StatelessWidget{
                           String eventID = await Event.insertEventFireBase(eventData);
                           eventData["ID"] = eventID;
                           await Event.insertEventLocal(eventData);
-
+                          setStateCallBack();
                         }
                         Navigator.of(context).pop(); // Close the dialog                        
                       },

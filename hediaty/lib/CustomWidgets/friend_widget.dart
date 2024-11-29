@@ -5,6 +5,8 @@
 All of which are aligned horizontally
 */
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/user.dart';
+import 'package:hediaty/Pages/friendPage.dart';
 import '../Models/friend.dart';
 
 //***For the Future***
@@ -13,10 +15,10 @@ import '../Models/friend.dart';
 
 class FriendWidget extends StatelessWidget{
   //Image? friendImage;
-  final String friendName;
+  final UserModel friend;
   final int eventCount;
   final double paddingPixels = 16;
-  const FriendWidget({super.key, required this.friendName, required this.eventCount});
+  const FriendWidget({super.key, required this.friend, required this.eventCount});
   
   @override
   Widget build(BuildContext context) {
@@ -41,11 +43,13 @@ class FriendWidget extends StatelessWidget{
           displayedImage,
           Padding(
               padding: EdgeInsets.all(paddingPixels),
-              child: Text(friendName, style: TextStyle(color:Colors.blue,fontFamily: "Merienda", fontSize: 24)),
+              child: Text(friend.userName, style: TextStyle(color:Colors.blue,fontFamily: "Merienda", fontSize: 24)),
           ),  
           ]
         ),
-        onTap: (){print("Hello jj");}
+        onTap: (){print("Hello jj");
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MyFriendPage(friendData: friend)));
+        }
         );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/CustomWidgets/giftCreationDialog.dart';
 import 'package:hediaty/CustomWidgets/giftWidget.dart';
 import 'package:hediaty/Models/gift.dart';
 
@@ -24,6 +25,7 @@ class GiftState extends State<GiftPage>{
   Future setGiftWidgets() async{
     List<Gift> giftModelList = await Gift.getAllGifts(widget.eventID);
     giftList = giftModelList.map((gift) => GiftWidget(gift: gift),).toList();
+    print("Gift Widgets are $giftList");
   }
   @override
   Widget build(BuildContext context){
@@ -40,6 +42,25 @@ class GiftState extends State<GiftPage>{
         // Here we take the value from the EventPage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+
+        actions: [
+          IconButton(
+           onPressed: (){print("Barcode yet to be implemented");},
+           icon: Icon(Icons.barcode_reader)
+           ),
+
+           IconButton(onPressed: (){
+            showDialog(context: context, builder: (BuildContext context){
+              return GiftCreationDialog(eventID: widget.eventID, setStateCallBack: (){setState(() {
+                
+              });},);
+            }
+            );
+
+           },
+           icon: Icon(Icons.add)
+           )
+        ],
 
       ),
       body: FutureBuilder(

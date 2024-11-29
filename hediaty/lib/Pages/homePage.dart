@@ -22,7 +22,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //print("email is ${FirebaseAuth.instance.currentUser!.email!}");
     UserModel loggedInUser = LoggedUser.getLoggedUser();
     List<UserModel> friendModelList = await loggedInUser.getAllFriendsFirebase();
-    friendList = friendModelList.map((friend) => FriendWidget(friendName: friend.userName, eventCount: friend.eventCount,),).toList();
+    friendList = friendModelList.map((friend) => FriendWidget(friend: friend, eventCount: friend.eventCount,),).toList();
     //print(friendList);
   }
 

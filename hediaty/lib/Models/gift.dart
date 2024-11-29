@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:hediaty/Models/DBManager.dart';
 
 class Gift{
@@ -7,8 +8,8 @@ class Gift{
   String category;
   double price;
   bool isPledged;
-  int eventID;
-  int? pledgerID;
+  String eventID;
+  String? pledgerID;
   Gift({required this.ID,
         required this.name,
         this.description, 
@@ -40,6 +41,44 @@ class Gift{
   }
 
 
+  static Future<void> insertGiftLocal(String ID,String name, String category, String? description, double price, String eventID) async{
+    Map<String, Object?> giftData = {
+      "ID" : ID,
+      "name" : name,
+      "description" : description,
+      "category" : category,
+      "price" : price,
+      "isPledged" : 0,
+      "eventID" : eventID,
+      "pledgerID" : ""
+    };
 
+
+
+    final db = await DBManager.getDataBase();
+    await db.insert("GIFTS",giftData);    
+  }
+
+  //function inserts gift into firebase and returns the gift ID
+  static Future<String> insertGiftFireBase(String name, String category, String? description, double price, String eventID) async{
+
+    Map<String, Object?> giftData = {
+      "name" : name,
+      "description" : description,
+      "category" : category,
+      "price" : price,
+      "isPledged" : 0,
+      "eventID" : eventID,
+      "pledgerID" : ""
+    };
+    var giftListRef = FirebaseDatabase.instance.ref("Gifts");
+    var newGiftRef = giftListRef.push();
+    var eventRef = FirebaseDatabase.instance.ref("Events/${giftData["eventID"]}");
+    var eventMap = (await eventRef.get()).value as Map;
+
+    await newGiftRef.set(giftData);
+    await eventRef.update({"giftCount" : eventMap["giftCount"] + 1});
+    return newGiftRef.key!;
+  }
 
 }

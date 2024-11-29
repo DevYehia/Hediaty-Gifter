@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Pages/profilePage.dart';
 import '../CustomWidgets/friend_widget.dart';
@@ -7,18 +6,17 @@ import 'eventsPage.dart';
 import 'homePage.dart';
 
 
-class MyMainPage extends StatefulWidget {
-  const MyMainPage({super.key, required this.title});
-  final String title;
+class MyFriendPage extends StatefulWidget {
 
+  const MyFriendPage({super.key, required this.friendData});
+  final UserModel friendData;
   @override
-  State<MyMainPage> createState() => _MyMainPageState();
+  State<MyFriendPage> createState() => _MyFriendPageState();
 }
 
-class _MyMainPageState extends State<MyMainPage> {
+class _MyFriendPageState extends State<MyFriendPage> {
   int navCurrIndex = 0;
-  UserModel loggedInUser = LoggedUser.getLoggedUser();
-  StatefulWidget selectedPage = MyHomePage(title: "Your Friends");
+  StatefulWidget? selectedPage = null;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,12 +26,9 @@ class _MyMainPageState extends State<MyMainPage> {
           setState(() {
             navCurrIndex = index;
             if(index == 0){
-              selectedPage = MyHomePage(title: "Your Friends");
+              selectedPage = EventPage(title: "${widget.friendData.userName}'s Events", isOwner: false,userID: widget.friendData.userID);
             }
             else if(index == 1){
-              selectedPage = EventPage(title: "Your Events", isOwner: true,userID: loggedInUser.userID,);
-            }
-            else if(index == 2){
               selectedPage = ProfilePage();
             }
           });
@@ -43,15 +38,11 @@ class _MyMainPageState extends State<MyMainPage> {
         destinations: const <Widget>[
           NavigationDestination(
             icon: Icon(Icons.person),
-            label: 'My Friends',
-          ),
-          NavigationDestination(
-            icon: Badge(child: Icon(Icons.notifications_sharp)),
-            label: 'My Events',
+            label: 'Events',
           ),
           NavigationDestination(
             icon: Icon(Icons.person),
-            label: 'My Profile',
+            label: 'Profile',
           ),
         ],
       ),
