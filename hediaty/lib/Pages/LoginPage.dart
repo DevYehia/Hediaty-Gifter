@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/Models/LoggedUser.dart';
+import 'package:hediaty/Models/gift.dart';
 import 'package:hediaty/Pages/SignUpPage.dart';
 import 'package:hediaty/Pages/mainPage.dart';
 
@@ -25,6 +26,10 @@ class LoginPageState extends State<LoginPage>{
         password: password
      );
       await LoggedUser.logInUser();
+
+
+      //sync data from firebase with local
+      await Gift.syncFirebaseWithLocalGifts();
       Navigator.push(context, MaterialPageRoute(builder: (context) => MyMainPage(title: "Gifter")));
     }
     on FirebaseAuthException catch (e) {

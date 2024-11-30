@@ -52,7 +52,7 @@ class EventWidget extends StatelessWidget{
         ),
         onTap: (){ 
 
-          Navigator.push(context, MaterialPageRoute(builder: (context) => GiftPage(title: event.eventName, eventID: event.eventID,)));}
+          Navigator.push(context, MaterialPageRoute(builder: (context) => GiftPage(title: event.eventName, eventID: event.eventID, isOwner: isOwner,userID: event.userID,)));}
         );
   }
 

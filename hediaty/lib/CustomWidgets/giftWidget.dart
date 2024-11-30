@@ -10,7 +10,9 @@ import 'package:hediaty/Pages/giftDescriptionPage.dart';
 
 class GiftWidget extends StatefulWidget{
   Gift gift;
-  GiftWidget({required this.gift});
+  final bool isOwner;
+  final String userID;
+  GiftWidget({required this.gift, required this.isOwner, required this.userID});
   @override
   State<StatefulWidget> createState() {
     return GiftWidgetState();
@@ -23,7 +25,7 @@ class GiftWidgetState extends State<GiftWidget>{
   double paddingPixels = 16;
   @override
   Widget build(BuildContext context) {
-    bool showPledgedStyle = widget.gift.isPledged;
+    bool showPledgedStyle = (widget.gift.pledgerID == null) ? false : true;
     return InkWell(
       child: Row(
         children: [
@@ -44,7 +46,13 @@ class GiftWidgetState extends State<GiftWidget>{
         onTap: () {
           //to-do 
           //make gift description page
-          Navigator.push(context, MaterialPageRoute(builder: (context) => GiftDescriptionPage(title: widget.gift.name!, gift: widget.gift)));
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => GiftDescriptionPage(
+              title: widget.gift.name!,
+              gift: widget.gift, 
+              isOwner: widget.isOwner,
+              isPledged: showPledgedStyle,
+              userID: widget.userID, )));
         },
     );
     

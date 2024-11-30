@@ -36,7 +36,7 @@ class _EventPageState extends State<EventPage> {
         rawEventList = await Event.getAllEvents(widget.userID);
       }
       else{
-        rawEventList = await Event.get
+        rawEventList = await Event.getAllEventsFirebase(widget.userID);
       }
       eventList = rawEventList.map((event) => EventWidget(event: event, isOwner: widget.isOwner,)).toList();
       return eventList;
@@ -79,6 +79,10 @@ class _EventPageState extends State<EventPage> {
       body:  FutureBuilder(
             future: setEventList(),
             builder: (context, snapshot){
+
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator()); 
+              }
               if(snapshot.connectionState == ConnectionState.done){
                 if(snapshot.hasError){
                     return Text("error: ${snapshot.error}");

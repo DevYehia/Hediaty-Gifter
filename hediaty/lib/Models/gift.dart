@@ -40,6 +40,29 @@ class Gift{
     return gifts;    
   }
 
+  static Future<List<Gift>> getAllGiftsFirebase(String eventID) async{
+    List<Gift> gifts = [];
+    final db = await DBManager.getDataBase();
+    //ist<Map> rawGifts = await db.rawQuery("SELECT * FROM GIFTS WHERE eventID = '$eventID'");
+    final ref = FirebaseDatabase.instance.ref("Gifts");
+    DatabaseEvent fetchedGifts = await ref.orderByChild("eventID").equalTo(eventID).once();
+    Map rawGifts = fetchedGifts.snapshot.value as Map;    
+    print(rawGifts);
+    for(final rawGiftKey in rawGifts.keys){
+      Map rawGift = rawGifts[rawGiftKey];
+      gifts.add(Gift(ID: rawGiftKey,
+      name: rawGift["name"],
+      price: rawGift["price"].toDouble(),
+      category: rawGift["category"],
+      description: rawGift["description"],
+      isPledged: rawGift["isPledged"] == 0 ? false : true,
+      eventID: rawGift["eventID"],
+      pledgerID: rawGift["pledgerID"]));
+    }
+    print("Gifts!!!");
+    return gifts;    
+  }
+
 
   static Future<void> insertGiftLocal(String ID,String name, String category, String? description, double price, String eventID) async{
     Map<String, Object?> giftData = {
@@ -81,4 +104,30 @@ class Gift{
     return newGiftRef.key!;
   }
 
+  static Future<void> pledgeFriendGift(String giftID, String userID) async{
+    var giftRef = FirebaseDatabase.instance.ref("Gifts/$giftID");
+    final db = await DBManager.getDataBase();
+    await giftRef.update(
+      {
+        "isPledged" : 1,
+        "pledgerID" : userID
+      }
+    );
+    //db.update("Gifts",{"pledge"})
+  }
+
+  static Future<void> syncFirebaseWithLocalGifts() async{
+    final db = await DBManager.getDataBase();
+    List<Map> localGiftsData = await db.rawQuery("SELECT ID, pledgerID FROM GIFTS");
+    final giftsRef = FirebaseDatabase.instance.ref("Gifts");
+    for (final localGiftData in localGiftsData){
+      Map giftDataMap = (await giftsRef.child(localGiftData["ID"]).get()).value as Map;
+      if (giftDataMap["pledgerID"] != localGiftData["pledgerID"]){ //someone pledged a gift, update that locally
+        await db.update("Gifts", {"pledgerID" : giftDataMap["pledgerID"]}, where: "ID ='${localGiftData["ID"]}'");
+      }
+    }
+
+  }
 }
+
+

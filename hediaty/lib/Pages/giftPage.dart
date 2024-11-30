@@ -7,7 +7,9 @@ import 'package:hediaty/Models/gift.dart';
 class GiftPage extends StatefulWidget{
   final String title;
   final String eventID;
-  GiftPage({required this.title, required this.eventID});
+  final bool isOwner;
+  final String userID;
+  GiftPage({required this.title, required this.eventID, required this.isOwner, required this.userID});
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -23,8 +25,15 @@ class GiftState extends State<GiftPage>{
   List<GiftWidget> giftList = [];
 
   Future setGiftWidgets() async{
-    List<Gift> giftModelList = await Gift.getAllGifts(widget.eventID);
-    giftList = giftModelList.map((gift) => GiftWidget(gift: gift),).toList();
+
+    late List<Gift> giftModelList;
+    if(widget.isOwner){
+      giftModelList = await Gift.getAllGifts(widget.eventID);
+    }
+    else{
+      giftModelList = await Gift.getAllGiftsFirebase(widget.eventID);
+    }
+    giftList = giftModelList.map((gift) => GiftWidget(gift: gift, isOwner: widget.isOwner,userID: widget.userID,),).toList();
     print("Gift Widgets are $giftList");
   }
   @override
@@ -43,7 +52,9 @@ class GiftState extends State<GiftPage>{
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
 
-        actions: [
+        //if gift's owner show actions otherwise no
+        actions: widget.isOwner ? 
+          [
           IconButton(
            onPressed: (){print("Barcode yet to be implemented");},
            icon: Icon(Icons.barcode_reader)
@@ -60,12 +71,16 @@ class GiftState extends State<GiftPage>{
            },
            icon: Icon(Icons.add)
            )
-        ],
+        ]: 
+        [],
 
       ),
       body: FutureBuilder(
             future: setGiftWidgets(),
             builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator()); 
+              }
               if(snapshot.connectionState == ConnectionState.done){
                 if(snapshot.hasError){
                     return Text("error: ${snapshot.error}");

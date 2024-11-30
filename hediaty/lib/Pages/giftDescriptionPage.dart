@@ -8,7 +8,10 @@ class GiftDescriptionPage extends StatelessWidget{
   //to-do
   //get the list from the database
   Gift gift;
-  GiftDescriptionPage({required this.title, required this.gift});
+  final bool isOwner;
+  final bool isPledged;
+  final String userID;
+  GiftDescriptionPage({required this.title, required this.gift, required this.isOwner, required this.isPledged, required this.userID});
 
   @override
   Widget build(BuildContext context){
@@ -55,7 +58,14 @@ class GiftDescriptionPage extends StatelessWidget{
               Text(gift.price.toString(),
               style: TextStyle(color:Colors.red,fontFamily: "Merienda", fontSize: 20)),
               ]
-            ),            
+            ),
+            (isOwner || isPledged)?
+            const Text(""):
+            ElevatedButton(onPressed: (){
+              Gift.pledgeFriendGift(gift.ID, userID);
+              Navigator.pop(context);
+            },
+             child: Text("Pledge"))            
               ]
               )
             )
