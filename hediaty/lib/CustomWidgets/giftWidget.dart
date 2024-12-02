@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/Models/gift.dart';
 import 'package:hediaty/Pages/giftDescriptionPage.dart';
@@ -23,9 +26,38 @@ class GiftWidget extends StatefulWidget{
 
 class GiftWidgetState extends State<GiftWidget>{
   double paddingPixels = 16;
+  late StreamSubscription<DatabaseEvent> pledgeListener;
+
+  //update gift pledge status if someone pledged a gift in realtime
+  void updatePledgeStatus(String pledgerID){
+    if(widget.gift.pledgerID != pledgerID){
+
+      //update localDB if pledge/unpledge happens
+      //to test --> calling without await
+      if(widget.isOwner){
+        Gift.updatePledgerLocal(pledgerID, widget.gift.ID);
+      }
+      //update pledger ID
+      widget.gift.pledgerID = pledgerID;
+      String snackMessage = pledgerID == "" ?  "${widget.gift.name} has been unPledged :(" : "${widget.gift.name} has been pledged!!" ;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(snackMessage)));
+      setState(() {
+        
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    pledgeListener = Gift.attachListenerForPledge(widget.gift.ID, updatePledgeStatus);
+    
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    bool showPledgedStyle = (widget.gift.pledgerID == null) ? false : true;
+    bool showPledgedStyle = (widget.gift.pledgerID == "") ? false : true;
     return InkWell(
       child: Row(
         children: [

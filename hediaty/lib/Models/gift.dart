@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:hediaty/Models/DBManager.dart';
 
 class Gift{
@@ -116,6 +119,11 @@ class Gift{
     //db.update("Gifts",{"pledge"})
   }
 
+  static Future<void> updatePledgerLocal(String newPledgerID, String giftID) async{
+    final db = await DBManager.getDataBase();
+    await db.update("Gifts",{"pledgerID" : newPledgerID}, where: "ID ='$giftID'");
+  }
+
   static Future<void> syncFirebaseWithLocalGifts() async{
     final db = await DBManager.getDataBase();
     List<Map> localGiftsData = await db.rawQuery("SELECT ID, pledgerID FROM GIFTS");
@@ -126,6 +134,21 @@ class Gift{
         await db.update("Gifts", {"pledgerID" : giftDataMap["pledgerID"]}, where: "ID ='${localGiftData["ID"]}'");
       }
     }
+
+  }
+
+
+  static StreamSubscription<DatabaseEvent> attachListenerForPledge(String giftID, void Function(String) callback){
+
+
+      //listen for Pledging on Gift with giftID
+      var giftPledgerRef = FirebaseDatabase.instance.ref("Gifts/$giftID/pledgerID");
+      var giftPledgeListener = giftPledgerRef.onValue.listen((event) { 
+          print("I am called");
+          callback(event.snapshot.value as String);
+        }
+      ,);    
+      return giftPledgeListener;
 
   }
 }

@@ -18,6 +18,7 @@ class SignUpPageState extends State<SignUpPage>{
 
   Future<void> addUserToFirebaseAuth(String email, String password) async{
     var user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+
   }
 
   

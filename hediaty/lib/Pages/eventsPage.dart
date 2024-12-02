@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/eventCreationDialog.dart';
 import 'package:hediaty/Models/DBManager.dart';
@@ -17,11 +18,26 @@ class EventPage extends StatefulWidget {
 
   @override
   State<EventPage> createState() => _EventPageState();
+
+
 }
 
 class _EventPageState extends State<EventPage> {
 
 
+    //attach a listener to user's event Count to update page accordingly
+    @override
+    void initState() {
+      super.initState();
+      //listen for changes on friend's eventCount
+      var eventCountRef = FirebaseDatabase.instance.ref("Users/${widget.userID}/eventCount");
+      eventCountRef.onValue.listen((event) {
+        setState(() {
+            
+        });
+        }
+      ,);
+    }
 
     List<EventWidget> eventList = [];
 
@@ -39,12 +55,18 @@ class _EventPageState extends State<EventPage> {
         rawEventList = await Event.getAllEventsFirebase(widget.userID);
       }
       eventList = rawEventList.map((event) => EventWidget(event: event, isOwner: widget.isOwner,)).toList();
+
+
+    
       return eventList;
     }
 
   int navCurrIndex = 0;
   @override
   Widget build(BuildContext context) {
+
+
+
 
 
     return Scaffold(

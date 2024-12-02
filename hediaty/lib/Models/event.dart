@@ -75,6 +75,9 @@ class Event{
     var userRef = FirebaseDatabase.instance.ref("Users/${eventData["userID"]}");
     var userMap = (await userRef.get()).value as Map;
 
+
+    //always make sure the eventCount update is second
+    //because we listen to it to load new events
     await newEventRef.set(eventData);
     await userRef.update({"eventCount" : userMap["eventCount"] + 1});
 
