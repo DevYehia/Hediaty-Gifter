@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/user.dart';
+import 'package:hediaty/Pages/pledgedGiftsPage.dart';
 import 'package:hediaty/Pages/profilePage.dart';
 import '../CustomWidgets/friend_widget.dart';
 import 'eventsPage.dart';
@@ -36,6 +37,9 @@ class _MyMainPageState extends State<MyMainPage> {
             else if(index == 2){
               selectedPage = ProfilePage();
             }
+            else if(index == 3){
+              selectedPage = PledgedGiftsPage(userID: loggedInUser.userID,);
+            }
           });
         },
         indicatorColor: Colors.amber,
@@ -46,12 +50,16 @@ class _MyMainPageState extends State<MyMainPage> {
             label: 'My Friends',
           ),
           NavigationDestination(
-            icon: Badge(child: Icon(Icons.notifications_sharp)),
+            icon: Icon(Icons.notifications_sharp),
             label: 'My Events',
           ),
           NavigationDestination(
             icon: Icon(Icons.person),
             label: 'My Profile',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.card_giftcard),
+            label: 'Pledged Gifts',
           ),
         ],
       ),
