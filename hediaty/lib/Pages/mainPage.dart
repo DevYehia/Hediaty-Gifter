@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Pages/pledgedGiftsPage.dart';
 import 'package:hediaty/Pages/profilePage.dart';
@@ -18,12 +17,13 @@ class MyMainPage extends StatefulWidget {
 
 class _MyMainPageState extends State<MyMainPage> {
   int navCurrIndex = 0;
-  UserModel loggedInUser = LoggedUser.getLoggedUser();
+  //UserModel loggedInUser = LoggedUser.getLoggedUser();
+  String loggedUserID = UserModel.getLoggedUserID();
 
   StatefulWidget selectedPage = MyHomePage(title: "Your Friends");
   @override
   Widget build(BuildContext context) {
-    print("Logged User Now is ${loggedInUser.userID}");
+    print("Logged User Now is ${loggedUserID}");
     return Scaffold(
       body: selectedPage,
       bottomNavigationBar: NavigationBar(
@@ -34,13 +34,13 @@ class _MyMainPageState extends State<MyMainPage> {
               selectedPage = MyHomePage(title: "Your Friends");
             }
             else if(index == 1){
-              selectedPage = EventPage(title: "Your Events", isOwner: true,userID: loggedInUser.userID,);
+              selectedPage = EventPage(title: "Your Events", isOwner: true,userID: loggedUserID,);
             }
             else if(index == 2){
               selectedPage = ProfilePage();
             }
             else if(index == 3){
-              selectedPage = PledgedGiftsPage(userID: loggedInUser.userID,);
+              selectedPage = PledgedGiftsPage(userID: loggedUserID,);
             }
           });
         },

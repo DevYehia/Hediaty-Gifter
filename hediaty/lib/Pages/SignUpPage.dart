@@ -16,20 +16,25 @@ class SignUpPage extends StatefulWidget{
 
 class SignUpPageState extends State<SignUpPage>{
 
-  Future<void> addUserToFirebaseAuth(String email, String password) async{
-    var user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-
+  //returns ID of user
+  Future<String> addUserToFirebaseAuth(String email, String password) async{
+    var userCredentials = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+    await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+    return userCredentials.user!.uid;
   }
 
   
-  Future<void> addUsertoFirebaseDB(String name, String phone, String email) async{
+  Future<void> addUsertoFirebaseDB(String ID, String name, String phone, String email) async{
 
     var userListRef = FirebaseDatabase.instance.ref("Users");
-    var newUserRef = userListRef.push();
-    await newUserRef.set({
-      "email" : email,
-      "name" : name,
-      "phone" : phone
+    await userListRef.update(
+      { ID:
+        {
+        "email" : email,
+        "name" : name,
+        "phone" : phone,
+        "eventCount" : 0
+      }
     });
   }
 
@@ -156,12 +161,12 @@ class SignUpPageState extends State<SignUpPage>{
                       child: ElevatedButton(onPressed: () async{
                       if(globalFormKey.currentState!.validate()){
                         //add user to firebase Auth and Firebase RealTime Database
-                        await addUserToFirebaseAuth(emailController.text, passController.text);
-                        await addUsertoFirebaseDB(nameController.text, phoneController.text, emailController.text);
+                        String ID = await addUserToFirebaseAuth(emailController.text, passController.text);
+                        await addUsertoFirebaseDB(ID,nameController.text, phoneController.text, emailController.text);
 
 
 
-                        //Navigator.push(context, MaterialPageRoute(builder: (context) => MyMainPage(title: "Gifter")));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyMainPage(title: "Gifter")));
                       }
                     }, 
                     child: Text("SignUp"))

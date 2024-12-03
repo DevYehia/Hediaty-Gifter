@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/event.dart';
+import 'package:hediaty/Models/user.dart';
 
 class EventCreationDialog extends StatelessWidget{
 
   final eventNameController = TextEditingController();
   final eventCategoryController = TextEditingController();
   final eventDescriptionController = TextEditingController();
+  final eventDateController = TextEditingController();
+  final eventLocationController = TextEditingController();
   final VoidCallback setStateCallBack;
 
   EventCreationDialog({required this.setStateCallBack});
@@ -51,7 +53,28 @@ class EventCreationDialog extends StatelessWidget{
                       labelText: "Description",
                       ),
                     ),
-   
+                    TextFormField(
+                      controller: eventDateController,
+                      decoration: InputDecoration(
+                        labelText: "Date",
+                        ), 
+                      onTap: () async{
+                        DateTime? date = DateTime(1900);
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                        date = await showDatePicker(
+                                  context: context, 
+                                  initialDate:DateTime.now(),
+                                  firstDate:DateTime(1900),
+                                  lastDate: DateTime(2100));
+
+                        eventDateController.text = "${date?.day}/${date?.month}/${date?.year}";
+                        },),
+                    TextFormField(
+                      controller: eventLocationController,
+                      decoration: InputDecoration(
+                      labelText: "Location",
+                      ),
+                    ),
                   ],
         )
       ),
@@ -65,14 +88,16 @@ class EventCreationDialog extends StatelessWidget{
                     TextButton(
                       onPressed: () async{
                         if(globalFormKey.currentState!.validate()){
+
                           Map<String, Object?> eventData = {
                             'name' : eventNameController.text,
-                            'date' : "2011-11-22", //To Do --> Add proper date
+                            'date' : eventDateController.text, //To Do --> Add proper date
                             'category' : eventCategoryController.text,
-                            'location' : 'ElMarg',
+                            'location' : eventLocationController.text,
                             'description': eventDescriptionController.text,
-                            'userID' : LoggedUser.getLoggedUser().userID
+                            'userID' : UserModel.getLoggedUserID()
                           };
+                          print("Data Map is $eventData");
                           //insert to firebase
                           //get event ID
                           //insert to local DB

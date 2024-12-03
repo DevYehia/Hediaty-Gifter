@@ -1,14 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/event.dart';
+import 'package:hediaty/Models/gift.dart';
 
-class PledgedGiftWidget extends StatelessWidget {
-  final String giftName;
-  final String date;
 
-  const PledgedGiftWidget({
+class PledgedGiftWidget extends StatefulWidget{
+
+  final Gift gift;
+  late String date;
+  VoidCallback refreshCallback;
+
+  PledgedGiftWidget({
     Key? key,
-    required this.giftName,
-    required this.date,
+    required this.gift,
+    required this.refreshCallback
   }) : super(key: key);
+  
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return PledgedGiftWidgetState();
+  }
+
+}
+
+
+class PledgedGiftWidgetState extends State<PledgedGiftWidget> {
+
+
+  Future<void> setWidgetData() async{
+    Event giftEvent = await Event.getEventByID(widget.gift.eventID);
+    widget.date = giftEvent.eventDate;
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +47,19 @@ class PledgedGiftWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
+            FutureBuilder(
+            future: setWidgetData(),
+            builder: (context, snapshot){
+
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator()); 
+              }
+              if(snapshot.connectionState == ConnectionState.done){
+                if(snapshot.hasError){
+                    return Text("error: ${snapshot.error}");
+                }
+                return  SingleChildScrollView(
+                          child: Row(
               children: [
                 // Placeholder for an image
                 Container(
@@ -45,7 +81,7 @@ class PledgedGiftWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      giftName,
+                      widget.gift.name,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -54,7 +90,7 @@ class PledgedGiftWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "Event Date: $date",
+                      "Event Date: ${widget.date}",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -64,10 +100,17 @@ class PledgedGiftWidget extends StatelessWidget {
                 ),
               ],
             ),
+                );
+              }
+              return Text("Hello");
+            }
+          ),
+
             // Unpledge button
             IconButton(
-              onPressed: () {
-                print("Unpledge");
+              onPressed: () async{
+                await Gift.unpledgeGift(widget.gift.ID);
+                widget.refreshCallback();
               },
               icon: const Icon(Icons.clear),
               color: Colors.red,

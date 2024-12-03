@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/gift.dart';
 
 class GiftCreationDialog extends StatelessWidget{

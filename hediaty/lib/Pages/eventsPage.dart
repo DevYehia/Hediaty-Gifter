@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/eventCreationDialog.dart';
 import 'package:hediaty/Models/DBManager.dart';
-import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/CustomWidgets/eventWidget.dart';
 import 'package:hediaty/Models/user.dart';

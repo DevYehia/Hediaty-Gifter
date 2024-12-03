@@ -31,6 +31,11 @@ Future<void> resetLocalDB() async{
     final database =await DBManager.getDataBase();
     try{
         await database.execute("DROP TABLE EVENTS");
+    }
+    catch (e){
+
+    }
+    try{
         await database.execute("DROP TABLE GIFTS");
     }
     catch (e){

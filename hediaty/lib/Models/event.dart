@@ -4,7 +4,7 @@ import 'package:hediaty/Models/DBManager.dart';
 class Event{
   String eventID;
   String eventName;
-  DateTime eventDate;
+  String eventDate;
   String category;
   String location;
   String? description;
@@ -26,7 +26,7 @@ class Event{
     for(final rawEvent in rawEvents){
       events.add(Event(eventID: rawEvent["ID"],
       eventName: rawEvent["name"],
-      eventDate: DateTime.parse(rawEvent["date"]),
+      eventDate: rawEvent["date"],
       category: rawEvent["category"],
       location: rawEvent["location"],
       description: rawEvent["description"],
@@ -51,7 +51,7 @@ class Event{
       //print("raw event is $rawEvent");
       events.add(Event(eventID: rawEventKey,
       eventName: rawEvent["name"],
-      eventDate: DateTime.parse(rawEvent["date"]),
+      eventDate: rawEvent["date"],
       category: rawEvent["category"],
       location: rawEvent["location"],
       description: rawEvent["description"],
@@ -84,6 +84,19 @@ class Event{
     //remove giftCount key so it doesn't get inserted Locally
     eventData.removeWhere((key, value) => key == "giftCount");
     return newEventRef.key!;
+  }
+
+  static Future<Event> getEventByID(String inputEventID) async{
+    var fetchedEvent = await FirebaseDatabase.instance.ref("Events/$inputEventID").get();
+    Map rawEvent = fetchedEvent.value as Map;
+    return Event(eventID: fetchedEvent.key!,
+      eventName: rawEvent["name"],
+      eventDate: rawEvent["date"],
+      category: rawEvent["category"],
+      location: rawEvent["location"],
+      description: rawEvent["description"],
+      userID: rawEvent["userID"]);
+
   }
 
 

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hediaty/Models/DBManager.dart';
 import 'package:hediaty/Models/event.dart';
@@ -141,6 +142,9 @@ class UserModel{
 
     }
 
+    static String getLoggedUserID(){
+      return FirebaseAuth.instance.currentUser!.uid;
+    }
 
   
 }

@@ -37,7 +37,7 @@ class EventWidget extends StatelessWidget{
             Padding(
               padding: EdgeInsets.all(paddingPixels),
               //child: Text(DateFormat.yMd().format(event.eventDate), style: TextStyle(color:Colors.red))
-              child: Text(DateFormat.yMd().format(event.eventDate), style: TextStyle(color:Colors.red))
+              child: Text(event.eventDate.toString(), style: TextStyle(color:Colors.red))
             ),]
         )
         ),

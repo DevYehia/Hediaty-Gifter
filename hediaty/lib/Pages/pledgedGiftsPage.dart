@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
 import "../CustomWidgets/pledgedGiftWidget.dart";
 
@@ -17,7 +18,11 @@ class _PledgedGiftsPageState extends State<PledgedGiftsPage> {
   List<PledgedGiftWidget> pledgedGiftWidgetList = [];
   Future<void> getPledgedGifts() async{
     List pledgedGiftList = await Gift.getPledgedGiftsByUserID(widget.userID);
-    pledgedGiftWidgetList = pledgedGiftList.map((gift) => PledgedGiftWidget(giftName: gift.name, date: "Haha"),).toList();
+    pledgedGiftWidgetList = pledgedGiftList.map((gift) => PledgedGiftWidget(gift: gift, refreshCallback: () {
+      setState(() {
+        
+      });
+    },),).toList();
   }
 
 

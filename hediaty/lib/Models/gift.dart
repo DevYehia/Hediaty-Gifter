@@ -156,24 +156,28 @@ class Gift{
     List<Gift> pledgedGifts = [];
     final ref = FirebaseDatabase.instance.ref("Gifts");
     DatabaseEvent fetchedGifts = await ref.orderByChild("pledgerID").equalTo(userID).once();
-    print("Fetched Gifts are ${fetchedGifts.snapshot.value}");
     Map fetchedGiftsMap = fetchedGifts.snapshot.value as Map;
-    print("Fetched Gifts are $fetchedGiftsMap");
     for(final giftKey in fetchedGiftsMap.keys){
       Map rawGift = fetchedGiftsMap[giftKey];
 
-      pledgedGifts.add(Gift(ID: rawGift["ID"],
+      pledgedGifts.add(Gift(ID: giftKey,
       name: rawGift["name"],
-      price: rawGift["price"],
+      price: rawGift["price"].toDouble(),
       category: rawGift["category"],
       description: rawGift["description"],
       isPledged: rawGift["isPledged"] == 0 ? false : true,
       eventID: rawGift["eventID"],
       pledgerID: rawGift["pledgerID"]));
     }
+    print("Hello");
     return pledgedGifts;
 
   } 
+
+  static Future<void> unpledgeGift(String giftID) async{
+    var giftRef = FirebaseDatabase.instance.ref("Gifts/$giftID");
+    await giftRef.update({"pledgerID" : ""});    
+  }
 
 
 }
