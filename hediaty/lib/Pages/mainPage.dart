@@ -19,9 +19,11 @@ class MyMainPage extends StatefulWidget {
 class _MyMainPageState extends State<MyMainPage> {
   int navCurrIndex = 0;
   UserModel loggedInUser = LoggedUser.getLoggedUser();
+
   StatefulWidget selectedPage = MyHomePage(title: "Your Friends");
   @override
   Widget build(BuildContext context) {
+    print("Logged User Now is ${loggedInUser.userID}");
     return Scaffold(
       body: selectedPage,
       bottomNavigationBar: NavigationBar(

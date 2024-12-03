@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/Models/gift.dart';
 import "../CustomWidgets/pledgedGiftWidget.dart";
 
 class PledgedGiftsPage extends StatefulWidget {
@@ -13,10 +14,10 @@ class PledgedGiftsPage extends StatefulWidget {
 class _PledgedGiftsPageState extends State<PledgedGiftsPage> {
 
 
-  List<PledgedGiftWidget> pledgedGiftList = [PledgedGiftWidget(giftName: "Test", date: "haha")];
+  List<PledgedGiftWidget> pledgedGiftWidgetList = [];
   Future<void> getPledgedGifts() async{
-    //this function should get all pledged gifts
-    //and fill the pledged gifts list with the widgets
+    List pledgedGiftList = await Gift.getPledgedGiftsByUserID(widget.userID);
+    pledgedGiftWidgetList = pledgedGiftList.map((gift) => PledgedGiftWidget(giftName: gift.name, date: "Haha"),).toList();
   }
 
 
@@ -42,7 +43,7 @@ class _PledgedGiftsPageState extends State<PledgedGiftsPage> {
                 }
                 return  SingleChildScrollView(
                           child: Center( child: Column(
-                            children: pledgedGiftList
+                            children: pledgedGiftWidgetList
                           )
                           )
                 );

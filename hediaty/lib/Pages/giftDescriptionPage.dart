@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/giftWidget.dart';
+import 'package:hediaty/Models/LoggedUser.dart';
 import 'package:hediaty/Models/gift.dart';
 
 class GiftDescriptionPage extends StatelessWidget{
@@ -62,7 +63,7 @@ class GiftDescriptionPage extends StatelessWidget{
             (isOwner || isPledged)?
             const Text(""):
             ElevatedButton(onPressed: (){
-              Gift.pledgeFriendGift(gift.ID, userID);
+              Gift.pledgeFriendGift(gift.ID, LoggedUser.getLoggedUser().userID);
               Navigator.pop(context);
             },
              child: Text("Pledge"))            
