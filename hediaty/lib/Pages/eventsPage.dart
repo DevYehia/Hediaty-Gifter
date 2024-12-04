@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,9 @@ import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/CustomWidgets/eventWidget.dart';
 import 'package:hediaty/Models/user.dart';
 import '../CustomWidgets/friend_widget.dart';
+
+enum SortCategories {nameSort, dateSort}
+
 class EventPage extends StatefulWidget {
   const EventPage({super.key, required this.title, required this.isOwner, required this.userID});
 
@@ -28,6 +33,7 @@ class _EventPageState extends State<EventPage> {
     @override
     void initState() {
       super.initState();
+
       //listen for changes on friend's eventCount
       var eventCountRef = FirebaseDatabase.instance.ref("Users/${widget.userID}/eventCount");
       eventCountRef.onValue.listen((event) {
@@ -41,31 +47,28 @@ class _EventPageState extends State<EventPage> {
     List<EventWidget> eventList = [];
 
     Future setEventList() async{
-
-
-
       //if user is event's owner, get locally otherwise get from firebase
 
       late List<Event> rawEventList;
-      if(widget.isOwner){
-        rawEventList = await Event.getAllEvents(widget.userID);
-      }
-      else{
-        rawEventList = await Event.getAllEventsFirebase(widget.userID);
-      }
-      eventList = rawEventList.map((event) => EventWidget(event: event, isOwner: widget.isOwner,)).toList();
+      if(eventList.isEmpty){
+        if(widget.isOwner){
+          rawEventList = await Event.getAllEvents(widget.userID);
+        }
+        else{
+          rawEventList = await Event.getAllEventsFirebase(widget.userID);
+        }
+        eventList = rawEventList.map((event) => EventWidget(event: event,
+         isOwner: widget.isOwner,
+        ),).toList();
 
-
+      }
     
       return eventList;
     }
 
-  int navCurrIndex = 0;
+  SortCategories? selectedSort;
   @override
   Widget build(BuildContext context) {
-
-
-
 
 
     return Scaffold(
@@ -82,9 +85,36 @@ class _EventPageState extends State<EventPage> {
         title: Text(widget.title),
 
         //display add event button if user owns event
-        actions: widget.isOwner ? 
+        actions: 
         <Widget>[
-          IconButton(
+            PopupMenuButton<SortCategories>(
+                initialValue: selectedSort,
+                icon: const Icon(
+                  Icons.menu,
+                ), //use this icon
+                onSelected: (SortCategories item) {
+                  setState(() {
+                    selectedSort = item;
+                    if(selectedSort == SortCategories.dateSort){
+                      eventList.sort((a,b) => a.event.eventDate.compareTo(b.event.eventDate));
+                    }
+                    else if(selectedSort == SortCategories.nameSort){
+                      eventList.sort((a,b) => a.event.eventName.compareTo(b.event.eventName));
+                    }
+                  });
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<SortCategories>>[
+                  const PopupMenuItem<SortCategories>(
+                    value: SortCategories.dateSort,
+                    child: Text('Date Sort'),
+                  ),
+                  const PopupMenuItem<SortCategories>(
+                    value: SortCategories.nameSort,
+                    child: Text('Name Sort'),
+                  ),
+                ],
+              ),
+          widget.isOwner ? IconButton(
             onPressed: (){showDialog(context: context, builder: (BuildContext context){
               return EventCreationDialog(setStateCallBack: (){setState(() {
                 
@@ -93,12 +123,12 @@ class _EventPageState extends State<EventPage> {
             );
             },
             tooltip: "Add Event",
-            icon: const Icon(Icons.add)),
-        ]: 
-        null,
+            icon: const Icon(Icons.add)) : Text("")
+            ,
+        ],
       ),
       body:  FutureBuilder(
-            future: setEventList(),
+            future : setEventList(),
             builder: (context, snapshot){
 
               if(snapshot.connectionState == ConnectionState.waiting){

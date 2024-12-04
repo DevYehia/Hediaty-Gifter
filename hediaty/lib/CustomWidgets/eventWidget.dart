@@ -6,6 +6,8 @@
 *Delete Button
 All of which are aligned horizontally
 */
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
@@ -21,7 +23,10 @@ class EventWidget extends StatelessWidget{
   final Event event;
   final double paddingPixels = 16;
   final bool isOwner;
-  const EventWidget({super.key, required this.event, required this.isOwner});
+  const EventWidget({super.key,
+   required this.event,
+   required this.isOwner,
+    });
   
   @override
   Widget build(BuildContext context) {
@@ -43,8 +48,11 @@ class EventWidget extends StatelessWidget{
         ),
         //display edit and delete buttons only if user owns event
         Container(child: Row(children: isOwner ? [
-        IconButton(onPressed: (){print(event.eventID);}, icon:Icon(Icons.edit)),
-        IconButton(onPressed: (){print("prseddd");}, icon:Icon(Icons.clear)),
+        IconButton(onPressed: (){}, icon:Icon(Icons.edit)),
+        IconButton(onPressed: () async{
+            await Event.removeEventLocal(event.eventID);
+            await Event.removeEventFirebase(event.eventID);
+            }, icon:Icon(Icons.clear)),
         ] : 
         [])
         )

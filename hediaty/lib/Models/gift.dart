@@ -156,7 +156,7 @@ class Gift{
     List<Gift> pledgedGifts = [];
     final ref = FirebaseDatabase.instance.ref("Gifts");
     DatabaseEvent fetchedGifts = await ref.orderByChild("pledgerID").equalTo(userID).once();
-    Map fetchedGiftsMap = fetchedGifts.snapshot.value as Map;
+    Map fetchedGiftsMap = (fetchedGifts.snapshot.value != null)? fetchedGifts.snapshot.value as Map : {};
     for(final giftKey in fetchedGiftsMap.keys){
       Map rawGift = fetchedGiftsMap[giftKey];
 

@@ -15,8 +15,16 @@ class MyFriendPage extends StatefulWidget {
 }
 
 class _MyFriendPageState extends State<MyFriendPage> {
+
   int navCurrIndex = 0;
-  StatefulWidget? selectedPage = null;
+  StatefulWidget? selectedPage;
+
+  @override 
+  void initState() {
+    selectedPage = EventPage(title: "${widget.friendData.userName}'s Events", isOwner: false,userID: widget.friendData.userID);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

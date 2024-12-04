@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hediaty/Models/DBManager.dart';
 
@@ -99,5 +101,15 @@ class Event{
 
   }
 
+  static Future<void> removeEventLocal(String inputEventID) async{
+    final db = await DBManager.getDataBase();
+    await db.delete("Events",where: "ID = '$inputEventID'");
+
+  }
+
+  static Future<void> removeEventFirebase(String inputEventID) async{
+    var eventRef = await FirebaseDatabase.instance.ref("Events/$inputEventID");
+    await eventRef.remove();    
+  }
 
 }
