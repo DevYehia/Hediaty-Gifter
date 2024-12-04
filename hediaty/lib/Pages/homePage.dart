@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hediaty/CustomWidgets/friendSearchDelegate.dart';
 import 'package:hediaty/Models/user.dart';
 import '../CustomWidgets/friend_widget.dart';
 import '../Pages/eventsPage.dart';
@@ -45,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             onPressed: () {
               print("Enta");
-              //showSearch(context: context, delegate: CustomSearchDelegate());
+              showSearch(context: context, delegate: FriendSearchDelegate(friendWidgetList: friendList));
             },
             icon: Icon(Icons.search)
           ),
