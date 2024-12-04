@@ -50,7 +50,6 @@ class _EventPageState extends State<EventPage> {
       //if user is event's owner, get locally otherwise get from firebase
 
       late List<Event> rawEventList;
-      if(eventList.isEmpty){
         if(widget.isOwner){
           rawEventList = await Event.getAllEvents(widget.userID);
         }
@@ -60,8 +59,13 @@ class _EventPageState extends State<EventPage> {
         eventList = rawEventList.map((event) => EventWidget(event: event,
          isOwner: widget.isOwner,
         ),).toList();
-
-      }
+        print("Selected Sort is $selectedSort");
+        if(selectedSort == SortCategories.dateSort){
+          eventList.sort((a,b) => a.event.eventDate.compareTo(b.event.eventDate));
+        }
+        else if(selectedSort == SortCategories.nameSort){
+          eventList.sort((a,b) => a.event.eventName.toLowerCase().compareTo(b.event.eventName.toLowerCase()));
+        }
     
       return eventList;
     }
@@ -95,12 +99,6 @@ class _EventPageState extends State<EventPage> {
                 onSelected: (SortCategories item) {
                   setState(() {
                     selectedSort = item;
-                    if(selectedSort == SortCategories.dateSort){
-                      eventList.sort((a,b) => a.event.eventDate.compareTo(b.event.eventDate));
-                    }
-                    else if(selectedSort == SortCategories.nameSort){
-                      eventList.sort((a,b) => a.event.eventName.compareTo(b.event.eventName));
-                    }
                   });
                 },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<SortCategories>>[
