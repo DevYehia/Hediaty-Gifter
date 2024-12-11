@@ -20,10 +20,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> initFriendsList() async{
     //print("email is ${FirebaseAuth.instance.currentUser!.email!}");
-    UserModel loggedInUser = UserModel.fromID(UserModel.getLoggedUserID());
-    await loggedInUser.initUserModelByIDFirebase();
+    UserModel loggedInUser = await UserModel.getUserByID(UserModel.getLoggedUserID());
 
-    List<UserModel> friendModelList = await loggedInUser.getAllFriendsFirebase();
+    List<UserModel> friendModelList = await UserModel.getAllFriendsFirebase(loggedInUser.userID);
     friendList = friendModelList.map((friend) => FriendWidget(friend: friend, eventCount: friend.eventCount,),).toList();
     //print(friendList);
   }

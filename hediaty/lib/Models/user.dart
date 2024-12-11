@@ -29,6 +29,17 @@ class UserModel{
     this.email = userMap["email"];
   }
 
+  static Future<UserModel> getUserByID(String userID) async{
+    final ref = FirebaseDatabase.instance.ref();
+    final user = await ref.child("Users/$userID").get();
+    Map userMap = user.value as Map;
+    return UserModel(email: userMap["email"],
+                     userID: userID, 
+                     userName: userMap["name"], 
+                     phone: userMap["phone"],
+                     eventCount: userMap["eventCount"]);
+  }
+
 
   Future<List<UserModel>> getAllFriends() async{
     List<UserModel> friends = [];
@@ -41,7 +52,7 @@ class UserModel{
     return friends;
   }
 
-  Future<List<UserModel>> getAllFriendsFirebase() async{
+  static Future<List<UserModel>> getAllFriendsFirebase(String userID) async{
     List<UserModel> friends = [];
     final ref = FirebaseDatabase.instance.ref();
 
