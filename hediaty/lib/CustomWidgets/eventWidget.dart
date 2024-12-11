@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/eventEditingDialog.dart';
 import 'package:hediaty/Models/event.dart';
+import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Pages/giftPage.dart';
 import 'package:intl/intl.dart';
 
@@ -90,6 +91,7 @@ class _EventWidgetState extends State<EventWidget> {
                     onPressed: () async {
                       await Event.removeEventLocal(widget.event.eventID);
                       await Event.removeEventFirebase(widget.event.eventID);
+                      await UserModel.decrementEventCounter(widget.event.userID);
                       setState(() {
                         isRemoved = true;
                       });

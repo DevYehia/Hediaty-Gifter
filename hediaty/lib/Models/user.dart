@@ -157,5 +157,14 @@ class UserModel{
       return FirebaseAuth.instance.currentUser!.uid;
     }
 
+    static Future<void> decrementEventCounter(String userID) async{
+      var userRef = FirebaseDatabase.instance.ref("Users/$userID");
+      int eventCount = (await userRef.child("eventCount").get()).value as int;
+      await userRef.update({
+       "eventCount": eventCount - 1 
+      });
+
+    }
+
   
 }
