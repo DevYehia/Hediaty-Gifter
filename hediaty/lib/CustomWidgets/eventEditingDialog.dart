@@ -14,12 +14,19 @@ class EventEditingDialog extends StatelessWidget{
 
   final Event eventToModify;
   final VoidCallback setStateCallBack;
+  DateFormat dateFormatter = DateFormat("d/M/y");
 
-  EventEditingDialog({required this.setStateCallBack,required this.eventToModify});
+  EventEditingDialog({required this.setStateCallBack,required this.eventToModify}){
+    eventNameController.text = eventToModify.eventName;
+    eventCategoryController.text = eventToModify.category;
+    eventDescriptionController.text = eventToModify.description ?? "";
+    eventDateController.text = dateFormatter.format(eventToModify.eventDate);
+    eventLocationController.text = eventToModify.location;
+
+  }
   @override
   Widget build(BuildContext context) {
 
-    DateFormat dateFormatter = DateFormat("d/M/y");
 
     var globalFormKey = GlobalKey<FormState>();
    return AlertDialog(
@@ -29,7 +36,6 @@ class EventEditingDialog extends StatelessWidget{
         child: Column(
                   children: [
                     TextFormField(
-                      initialValue: eventToModify.eventName,
                       controller: eventNameController,
                       decoration: InputDecoration(
                         labelText: "Name",
@@ -42,7 +48,6 @@ class EventEditingDialog extends StatelessWidget{
                       },
                     ),
                     TextFormField(
-                      initialValue: eventToModify.category,
                       controller: eventCategoryController,
                       decoration: InputDecoration(
                         labelText: "Category",
@@ -55,14 +60,12 @@ class EventEditingDialog extends StatelessWidget{
                       },
                     ),
                     TextFormField(
-                      initialValue: eventToModify.description,
                       controller: eventDescriptionController,
                       decoration: InputDecoration(
                       labelText: "Description",
                       ),
                     ),
                     TextFormField(
-                      initialValue: dateFormatter.format(eventToModify.eventDate),
                       controller: eventDateController,
                       decoration: InputDecoration(
                         labelText: "Date",
@@ -79,7 +82,6 @@ class EventEditingDialog extends StatelessWidget{
                         eventDateController.text = "${date?.day}/${date?.month}/${date?.year}";
                         },),
                     TextFormField(
-                      initialValue: eventToModify.location,
                       controller: eventLocationController,
                       decoration: InputDecoration(
                       labelText: "Location",
@@ -109,7 +111,7 @@ class EventEditingDialog extends StatelessWidget{
                           };
                           print("Data Map is $eventData");
                           
-                          Event.updateEventLocal(
+                          await Event.updateEventLocal(
                             eventToModify.eventID, 
                             eventNameController.text,
                             eventDateController.text,
@@ -118,7 +120,7 @@ class EventEditingDialog extends StatelessWidget{
                             eventDescriptionController.text
                           );
 
-                          Event.updateEventFirebase(
+                          await Event.updateEventFirebase(
                             eventToModify.eventID, 
                             eventNameController.text,
                             eventDateController.text,

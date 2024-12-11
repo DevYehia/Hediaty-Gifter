@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hediaty/Models/user.dart';
 
 class ProfilePage extends StatefulWidget{
+
+    String userID;
+    ProfilePage({required this.userID});
+
     // TODO: implement createState
     @override
     State<ProfilePage> createState() => ProfilePageState();
-  }
+}
 
 
 class ProfilePageState extends State<ProfilePage>{
+
+  late UserModel user;
+
+
+
+  Future<void> getProfile() async{
+    user = await UserModel.getUserByID(widget.userID);
+  }
 
   @override
   Widget build(BuildContext context){
@@ -27,17 +40,34 @@ class ProfilePageState extends State<ProfilePage>{
         title: Text("My Profile"),
 
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              CircleAvatar(radius: 40,backgroundImage: AssetImage("assets/youssef.jpeg"),),
-              Text("Yehia")
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-            )
-        ],
-        ),
+      body: FutureBuilder(
+            future: getProfile(),
+            builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator()); 
+              }
+              if(snapshot.connectionState == ConnectionState.done){
+                if(snapshot.hasError){
+                    return Text("error: ${snapshot.error}");
+                }
+                return Column(
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(radius: 40,backgroundImage: AssetImage("assets/youssef.jpeg"),),
+                              Text(user.userName)
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            ),
+                            Text("Phone: ${user.phone}"),
+                            Text("Email: ${user.email}")
+                        ],
+                        );
+              }
+              return Text("Hello");
+            }
+          )
+  
     );
   }
 }

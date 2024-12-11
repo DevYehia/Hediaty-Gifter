@@ -37,7 +37,7 @@ class _MyMainPageState extends State<MyMainPage> {
               selectedPage = EventPage(title: "Your Events", isOwner: true,userID: loggedUserID,);
             }
             else if(index == 2){
-              selectedPage = ProfilePage();
+              selectedPage = ProfilePage(userID: loggedUserID,);
             }
             else if(index == 3){
               selectedPage = PledgedGiftsPage(userID: loggedUserID,);
