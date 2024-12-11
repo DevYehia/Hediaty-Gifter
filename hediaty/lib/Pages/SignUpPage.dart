@@ -51,6 +51,7 @@ class SignUpPageState extends State<SignUpPage>{
     final confirmPassController = TextEditingController();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("Welcome To Hediaty"),
         centerTitle: true,
@@ -85,8 +86,11 @@ class SignUpPageState extends State<SignUpPage>{
 
                     //Name Field
                     TextFormField(
+
                       controller: nameController,
                       decoration: InputDecoration(
+                        icon: Icon(Icons.person),
+                        iconColor: Colors.red,
                         labelText: "Name",
                       ),
                       validator: (value) {
@@ -101,13 +105,16 @@ class SignUpPageState extends State<SignUpPage>{
                     TextFormField(
                       controller: phoneController,
                       decoration: InputDecoration(
+                        icon: Icon(Icons.phone),
+                        iconColor: Colors.red,
                         labelText: "Phone",
-                        hintText: ""
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your phone number';
                         }
+
+                        //
                         return null;
                       },
                     ),
@@ -116,22 +123,30 @@ class SignUpPageState extends State<SignUpPage>{
                     TextFormField(
                       controller: emailController,
                       decoration: InputDecoration(
+                        icon: Icon(Icons.mail),
+                        iconColor: Colors.red,
                         labelText: "Email",
-                        hintText: ""
+                        hintText: "example@gmail.com"
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
+                        }
+                        //Incorrect email format
+                        else if(!value.contains('@')){
+                          return "Incorrect Email Format";
                         }
                         return null;
                       },
                     ),
                     //password field
                     TextFormField(
+                      obscureText: true,
                       controller: passController,
                       decoration: InputDecoration(
+                        icon: Icon(Icons.key),
+                        iconColor: Colors.red,
                         labelText: "Password",
-                        hintText: "example@gmail.com"
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -143,8 +158,11 @@ class SignUpPageState extends State<SignUpPage>{
 
                     //Confirm Password Field
                     TextFormField(
+                      obscureText: true,
                       controller: confirmPassController,
                       decoration: InputDecoration(
+                        icon: Icon(Icons.key),
+                        iconColor: Colors.red,
                         labelText: "Confirm Password",
                       ),
                       validator: (value) {
@@ -160,13 +178,22 @@ class SignUpPageState extends State<SignUpPage>{
                       padding: EdgeInsets.only(top: 50),
                       child: ElevatedButton(onPressed: () async{
                       if(globalFormKey.currentState!.validate()){
-                        //add user to firebase Auth and Firebase RealTime Database
-                        String ID = await addUserToFirebaseAuth(emailController.text, passController.text);
-                        await addUsertoFirebaseDB(ID,nameController.text, phoneController.text, emailController.text);
 
+                        //check if password and confirm password match
+                        if(passController.text != confirmPassController.text){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Password Fields Don't Match") 
+                              )
+                            );
+                        }
 
-
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyMainPage(title: "Gifter")));
+                        else{
+                          //add user to firebase Auth and Firebase RealTime Database
+                          String ID = await addUserToFirebaseAuth(emailController.text, passController.text);
+                          await addUsertoFirebaseDB(ID,nameController.text, phoneController.text, emailController.text);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyMainPage(title: "Gifter")));
+                        }
                       }
                     }, 
                     child: Text("SignUp"))

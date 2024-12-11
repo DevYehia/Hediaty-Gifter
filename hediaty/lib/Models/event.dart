@@ -2,11 +2,12 @@ import 'dart:ui';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hediaty/Models/DBManager.dart';
+import 'package:intl/intl.dart';
 
 class Event{
   String eventID;
   String eventName;
-  String eventDate;
+  DateTime eventDate;
   String category;
   String location;
   String? description;
@@ -28,7 +29,7 @@ class Event{
     for(final rawEvent in rawEvents){
       events.add(Event(eventID: rawEvent["ID"],
       eventName: rawEvent["name"],
-      eventDate: rawEvent["date"],
+      eventDate: DateFormat("d/M/y").parse(rawEvent["date"]),
       category: rawEvent["category"],
       location: rawEvent["location"],
       description: rawEvent["description"],
@@ -53,7 +54,7 @@ class Event{
       //print("raw event is $rawEvent");
       events.add(Event(eventID: rawEventKey,
       eventName: rawEvent["name"],
-      eventDate: rawEvent["date"],
+      eventDate: DateFormat("d/M/y").parse(rawEvent["date"]),
       category: rawEvent["category"],
       location: rawEvent["location"],
       description: rawEvent["description"],
@@ -93,7 +94,7 @@ class Event{
     Map rawEvent = fetchedEvent.value as Map;
     return Event(eventID: fetchedEvent.key!,
       eventName: rawEvent["name"],
-      eventDate: rawEvent["date"],
+      eventDate: DateFormat("d/M/y").parse(rawEvent["date"]),
       category: rawEvent["category"],
       location: rawEvent["location"],
       description: rawEvent["description"],
@@ -110,6 +111,38 @@ class Event{
   static Future<void> removeEventFirebase(String inputEventID) async{
     var eventRef = await FirebaseDatabase.instance.ref("Events/$inputEventID");
     await eventRef.remove();    
+  }
+
+  static Future<void> updateEventLocal(String eventID, String name, String date, String category, String location, String? description) async{
+    final db = await DBManager.getDataBase();
+
+    Map<String, Object?> eventMap = {
+      "name" : name,
+      "date" : date,
+      "category" : category,
+      "description" : description ?? "",
+      "location" : location 
+    };
+    await db.update("Events", eventMap, where: "ID = '$eventID'");
+
+  }
+
+  static Future<void> updateEventFirebase(String eventID, String name, String date, String category, String location, String? description) async{
+
+    final eventRef = FirebaseDatabase.instance.ref("Events/$eventID");
+
+    Map<String, Object?> eventMap = {
+      "name" : name,
+      "date" : date,
+      "category" : category,
+      "description" : description ?? "",
+      "location" : location 
+    };
+
+    await eventRef.update(eventMap);    
+
+
+
   }
 
 }

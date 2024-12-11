@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/CustomWidgets/eventEditingDialog.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Pages/giftPage.dart';
+import 'package:intl/intl.dart';
 
 
 //Widget is now stateful :)
@@ -22,6 +24,7 @@ class _EventWidgetState extends State<EventWidget> {
 
   final double paddingPixels = 16;
   bool isRemoved = false;
+  DateFormat dateFormatter = DateFormat("d/M/y");
   @override
   Widget build(BuildContext context) {
     if(!isRemoved){
@@ -58,7 +61,7 @@ class _EventWidgetState extends State<EventWidget> {
                 Padding(
                   padding: EdgeInsets.all(paddingPixels),
                   child: Text(
-                    widget.event.eventDate.toString(),
+                    dateFormatter.format(widget.event.eventDate),
                     style: const TextStyle(color: Colors.red),
                   ),
                 ),
@@ -67,12 +70,22 @@ class _EventWidgetState extends State<EventWidget> {
             if (widget.isOwner)
               Row(
                 children: [
-                  IconButton(
+
+                  //display event editing only if it is not past event
+                  widget.event.eventDate.isAfter(DateTime.now()) ? IconButton(
                     onPressed: () {
-                      // Edit button functionality here
+                      showDialog(context: context, builder: (BuildContext context){
+                        return EventEditingDialog(
+                          setStateCallBack: (){setState(() {
+                            
+                          });},
+                          eventToModify: widget.event
+                          );
+
+                    });
                     },
                     icon: const Icon(Icons.edit),
-                  ),
+                  ) : SizedBox.shrink(),
                   IconButton(
                     onPressed: () async {
                       await Event.removeEventLocal(widget.event.eventID);

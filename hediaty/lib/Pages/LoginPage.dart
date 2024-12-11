@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hediaty/Models/gift.dart';
@@ -9,7 +11,6 @@ class LoginPage extends StatefulWidget{
   const LoginPage();
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return LoginPageState();
   }
 
@@ -50,9 +51,10 @@ class LoginPageState extends State<LoginPage>{
     var passController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: Text("Welcome To Hediaty"),centerTitle: true,backgroundColor: Colors.blue,),
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(title: const Text("Welcome To Hediaty"),centerTitle: true,backgroundColor: Colors.blue,),
       body:
-        DecoratedBox(decoration: BoxDecoration(
+        DecoratedBox(decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage("assets/giftsBackground.jpg"),
               fit: BoxFit.cover
@@ -62,12 +64,12 @@ class LoginPageState extends State<LoginPage>{
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.only(top: 50, bottom: 30),
-              child: Text("Login",style: TextStyle(fontSize: 20),),
+              padding: const EdgeInsets.only(top: 50, bottom: 30),
+              child: const Text("Login",style: TextStyle(fontSize: 20),),
             ),
             Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Color.fromRGBO(51, 204, 51, 0.5)),
-              padding: EdgeInsets.all(30),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: const Color.fromRGBO(51, 204, 51, 0.5)),
+              padding: const EdgeInsets.all(30),
               width: 400,
               child: Form(
                 key: globalFormKey,
@@ -75,25 +77,39 @@ class LoginPageState extends State<LoginPage>{
                   children: [
                     TextFormField(
                       controller: emailController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.mail),
+                        iconColor: Colors.red,
                         labelText: "Mail",
                         hintText: "example@gmail.com"
                       ),
                       validator: (value) {
+
+                        //Empty Field
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
                         }
+
+                        //Incorrect email format
+                        else if(!value.contains('@')){
+                          return "Incorrect Email Format";
+                        }
+
+                        //good format
                         return null;
                       },
                     ),
                     TextFormField(
+                      obscureText: true,
                       controller: passController,
                       decoration: InputDecoration(
+                        icon: Icon(Icons.key),
+                        iconColor: Colors.red,
                         labelText: "Password",
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
+                          return 'Please enter your password';
                         }
                         return null;
                       },
