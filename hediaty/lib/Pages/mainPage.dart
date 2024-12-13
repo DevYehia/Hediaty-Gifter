@@ -22,6 +22,11 @@ class _MyMainPageState extends State<MyMainPage> {
   String loggedUserID = UserModel.getLoggedUserID();
   PageController pageSwipeController = PageController();
   var currentPageValue = 0.0;
+  Key navBarkey = UniqueKey();
+  late CustomBottomNavBar botNavBar;
+  ValueNotifier<int> botNavBarNotifer = ValueNotifier(0);  
+
+  
 
   StatefulWidget selectedPage = MyHomePage(title: "Your Friends");
 
@@ -29,6 +34,7 @@ class _MyMainPageState extends State<MyMainPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    botNavBar = CustomBottomNavBar(pageSelectController: pageSwipeController, indexNotifer: botNavBarNotifer,);
   }
 
   void changePage(int newPage){
@@ -43,7 +49,7 @@ class _MyMainPageState extends State<MyMainPage> {
 
         controller: pageSwipeController,
         onPageChanged: (value) {
-          navCurrIndex = value;          
+          botNavBarNotifer.value = value;
         },
         children: [
           MyHomePage(title: "Your Friends"),
@@ -52,7 +58,7 @@ class _MyMainPageState extends State<MyMainPage> {
           PledgedGiftsPage(userID: loggedUserID,)                  
         ],
         ),
-      bottomNavigationBar: CustomBottomNavBar(pageSelectController: pageSwipeController,pageChangeCallback: changePage,)
+      bottomNavigationBar: botNavBar
     );
   }
 }
