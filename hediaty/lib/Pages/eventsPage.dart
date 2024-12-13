@@ -59,7 +59,7 @@ class _EventPageState extends State<EventPage> {
         eventList = rawEventList.map((event) => EventWidget(event: event,
          isOwner: widget.isOwner,
         ),).toList();
-        print("Selected Sort is $selectedSort");
+        //print("Selected Sort is $selectedSort");
         if(selectedSort == SortCategories.dateSort){
           eventList.sort((a,b) => a.event.eventDate.compareTo(b.event.eventDate));
         }

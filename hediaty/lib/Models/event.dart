@@ -25,7 +25,7 @@ class Event{
     List<Event> events = [];
     final db = await DBManager.getDataBase();
     List<Map> rawEvents = await db.rawQuery("SELECT * FROM EVENTS WHERE userID = \'$userID\'");
-    print(rawEvents);
+    //print(rawEvents);
     for(final rawEvent in rawEvents){
       events.add(Event(eventID: rawEvent["ID"],
       eventName: rawEvent["name"],
@@ -48,7 +48,7 @@ class Event{
     DatabaseEvent fetchedEvents = await ref.orderByChild("userID").equalTo(userID).once();
     Map rawEvents = fetchedEvents.snapshot.value as Map;
 
-    print("Events are $rawEvents");
+    //print("Events are $rawEvents");
     for(final rawEventKey in rawEvents.keys){
       Map rawEvent = rawEvents[rawEventKey];
       //print("raw event is $rawEvent");

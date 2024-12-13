@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/CustomWidgets/bottomNavBar.dart';
 import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Pages/pledgedGiftsPage.dart';
 import 'package:hediaty/Pages/profilePage.dart';
@@ -19,52 +20,39 @@ class _MyMainPageState extends State<MyMainPage> {
   int navCurrIndex = 0;
   //UserModel loggedInUser = LoggedUser.getLoggedUser();
   String loggedUserID = UserModel.getLoggedUserID();
+  PageController pageSwipeController = PageController();
+  var currentPageValue = 0.0;
 
   StatefulWidget selectedPage = MyHomePage(title: "Your Friends");
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void changePage(int newPage){
+    pageSwipeController.jumpToPage(newPage);
+  }
+
   @override
   Widget build(BuildContext context) {
     print("Logged User Now is ${loggedUserID}");
     return Scaffold(
-      body: selectedPage,
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            navCurrIndex = index;
-            if(index == 0){
-              selectedPage = MyHomePage(title: "Your Friends");
-            }
-            else if(index == 1){
-              selectedPage = EventPage(title: "Your Events", isOwner: true,userID: loggedUserID,);
-            }
-            else if(index == 2){
-              selectedPage = ProfilePage(userID: loggedUserID,);
-            }
-            else if(index == 3){
-              selectedPage = PledgedGiftsPage(userID: loggedUserID,);
-            }
-          });
+      body: PageView(
+
+        controller: pageSwipeController,
+        onPageChanged: (value) {
+          navCurrIndex = value;          
         },
-        indicatorColor: Colors.amber,
-        selectedIndex: navCurrIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            icon: Icon(Icons.person),
-            label: 'My Friends',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.notifications_sharp),
-            label: 'My Events',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person),
-            label: 'My Profile',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.card_giftcard),
-            label: 'Pledged Gifts',
-          ),
+        children: [
+          MyHomePage(title: "Your Friends"),
+          EventPage(title: "Your Events", isOwner: true,userID: loggedUserID,),
+          ProfilePage(userID: loggedUserID,),
+          PledgedGiftsPage(userID: loggedUserID,)                  
         ],
-      ),
+        ),
+      bottomNavigationBar: CustomBottomNavBar(pageSelectController: pageSwipeController,pageChangeCallback: changePage,)
     );
   }
 }
