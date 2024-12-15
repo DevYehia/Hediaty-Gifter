@@ -33,7 +33,7 @@ Future<void> resetLocalDB() async {
   } catch (e) {}
   await database.execute('''
             CREATE TABLE Events(
-            ID INT PRIMARY KEY, 
+            ID INTEGER PRIMARY KEY, 
             name TEXT not null,
             date TEXT not null, 
             category TEXT not null,
@@ -79,7 +79,7 @@ Future<void> initDB() async {
       return db.execute(
         '''
             CREATE TABLE Events(
-            ID INT PRIMARY KEY, 
+            ID INTEGER PRIMARY KEY, 
             name TEXT not null,
             date TEXT not null, 
             category TEXT not null,

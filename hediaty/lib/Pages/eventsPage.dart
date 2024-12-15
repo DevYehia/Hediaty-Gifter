@@ -38,13 +38,15 @@ class _EventPageState extends State<EventPage> {
           setState(() {});
         });
     //listen for changes on friend's eventCount
+    if(!widget.isOwner){
     var eventCountRef =
-        FirebaseDatabase.instance.ref("Users/${widget.userID}/eventCount");
-    eventCountRef.onValue.listen(
-      (event) {
-        setState(() {});
-      },
-    );
+            FirebaseDatabase.instance.ref("Users/${widget.userID}/eventCount");
+        eventCountRef.onValue.listen(
+        (event) {
+            setState(() {});
+        },
+        );
+    }
   }
 
   @override

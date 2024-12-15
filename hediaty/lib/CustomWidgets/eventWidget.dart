@@ -6,13 +6,14 @@ import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Pages/giftPage.dart';
 import 'package:intl/intl.dart';
 
-enum EventOption {Publish, Edit, Delete}
+enum EventOption { Publish, Edit, Delete, Hide }
+
 //Widget is now stateful :)
 class EventWidget extends StatefulWidget {
-  final Event event;
+  Event event;
   final bool isOwner;
   final EventModelView modelView;
-  const EventWidget(
+  EventWidget(
       {super.key,
       required this.event,
       required this.isOwner,
@@ -32,6 +33,13 @@ class _EventWidgetState extends State<EventWidget> {
     // TODO: implement initState
     super.initState();
     nameColor = widget.event.firebaseID == null ? Colors.red : Colors.blue;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    print("I am Disposed!!!");
   }
 
   @override
@@ -60,7 +68,9 @@ class _EventWidgetState extends State<EventWidget> {
                 child: Text(
                   widget.event.eventName,
                   style: TextStyle(
-                    color: nameColor,
+                    color: widget.event.firebaseID == null
+                        ? Colors.red
+                        : Colors.blue,
                     fontFamily: "",
                     fontSize: 24,
                   ),
@@ -78,48 +88,45 @@ class _EventWidgetState extends State<EventWidget> {
           if (widget.isOwner)
             PopupMenuButton(
               icon: Icon(Icons.more_vert),
-              onSelected: (value) async{
-                if(value == EventOption.Publish){
-                  await widget.modelView.publishEvent(widget.event);
-
-                  setState(() {
-                    
-                  });
-
+              onSelected: (value) async {
+                if (value == EventOption.Publish) {
+                  widget.event.firebaseID =
+                      await widget.modelView.publishEvent(widget.event);
+                  print("firebase ID now is ${widget.event.firebaseID}");
+                  setState(() {});
+                } else if (value == EventOption.Edit) {
+                  await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return EventEditingDialog(
+                            setStateCallBack: () {
+                              setState(() {});
+                            },
+                            eventToModify: widget.event,
+                            modelView: widget.modelView);
+                      });
+                  setState(() {});
+                } else if (value == EventOption.Delete) {
+                  await widget.modelView.removeEvent(widget.event);
+                }
+                else if(value == EventOption.Hide){
+                  await widget.modelView.hideEvent(widget.event.firebaseID!, widget.event.userID, widget.event.eventID);
+                  widget.event.firebaseID = null;
+                  setState(() {});
                 }
               },
               itemBuilder: (context) => [
-                PopupMenuItem(child: Text("Publish"), value: EventOption.Publish),
+
+                if(widget.event.firebaseID == null)
                 PopupMenuItem(
-                  value: EventOption.Edit,
-                  child: //display event editing only if it is not past event
-                      widget.event.eventDate.isAfter(DateTime.now())
-                          ? IconButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return EventEditingDialog(
-                                          setStateCallBack: () {
-                                            setState(() {});
-                                          },
-                                          eventToModify: widget.event,
-                                          modelView: widget.modelView);
-                                    });
-                              },
-                              icon: const Icon(Icons.edit),
-                            )
-                          : SizedBox.shrink(),
-                ),
+                    child: Text("Publish"), value: EventOption.Publish),
+                if(widget.event.firebaseID != null)
                 PopupMenuItem(
-                  value: EventOption.Delete,
-                  child: IconButton(
-                    onPressed: () async {
-                      await widget.modelView.removeEvent(widget.event);
-                    },
-                    icon: const Icon(Icons.clear),
-                  ),
-                )
+                    child: Text("Hide"), value: EventOption.Hide),                
+                if (widget.event.eventDate.isAfter(DateTime
+                    .now())) //display event editing only if it is not past event
+                  PopupMenuItem(value: EventOption.Edit, child: Text("Edit")),
+                PopupMenuItem(value: EventOption.Delete, child: Text("Delete"))
               ],
             ),
         ],

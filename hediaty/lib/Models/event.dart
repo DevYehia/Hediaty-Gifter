@@ -146,7 +146,7 @@ class Event{
     await eventRef.update(eventMap);    
   }
 
-  static Future<void> setFirebaseIDinLocal(String firebaseID, int eventID) async{
+  static Future<void> setFirebaseIDinLocal(String? firebaseID, int eventID) async{
     final db = await DBManager.getDataBase();
     await db.update("Events", {"firebaseID": firebaseID}, where: "ID = $eventID");        
   }

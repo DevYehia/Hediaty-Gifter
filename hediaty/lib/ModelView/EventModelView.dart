@@ -121,10 +121,10 @@ class EventModelView {
     refreshCallback();
   }
 
-  Future<void> publishEvent(Event eventToPublish) async{
+  Future<String> publishEvent(Event eventToPublish) async{
     Map<String, Object?> eventData = {
       'name': eventToPublish.eventName,
-      'date': eventToPublish.eventDate, //To Do --> Add proper date
+      'date': dateFormatter.format(eventToPublish.eventDate),
       'category': eventToPublish.category,
       'location': eventToPublish.location,
       'description': eventToPublish.description ?? "",
@@ -133,11 +133,13 @@ class EventModelView {
     };
 
     String firebaseID = await Event.insertEventFireBase(eventData);
-    Event.setFirebaseIDinLocal(firebaseID, eventToPublish.eventID);
+    await Event.setFirebaseIDinLocal(firebaseID, eventToPublish.eventID);
 
     //set firebaseID in Event Object in the widget
-    allEventList![allEventList!.indexWhere(
-            (eventWidg) => eventWidg.event.eventID == eventToPublish.eventID)].event.firebaseID = firebaseID;
+    //allEventList![allEventList!.indexWhere(
+            //(eventWidg) => eventWidg.event.eventID == eventToPublish.eventID)].event.firebaseID = firebaseID;
+    return firebaseID;
+    
   }
 
   Future<void> editEvent(
@@ -172,17 +174,25 @@ class EventModelView {
 
     //update widget and refresh
     allEventList![allEventList!.indexWhere(
-            (eventWidg) => eventWidg.event.eventID == eventToModify.eventID)] =
-        EventWidget(event: eventToModify, isOwner: isOwner, modelView: this);
-    refreshCallback();
+            (eventWidg) => eventWidg.event.eventID == eventToModify.eventID)].event = eventToModify;
   }
 
   Future<void> removeEvent(Event eventToRemove) async {
     await Event.removeEventLocal(eventToRemove.eventID);
-    await Event.removeEventFirebase(eventToRemove.firebaseID!);
-    await UserModel.decrementEventCounter(eventToRemove.userID);
+    if(eventToRemove.firebaseID != null){
+      await Event.removeEventFirebase(eventToRemove.firebaseID!);
+      await UserModel.decrementEventCounter(eventToRemove.userID);
+    }
     allEventList!.removeWhere(
         (eventWidg) => eventWidg.event.eventID == eventToRemove.eventID);
     refreshCallback();
   }
+
+  //removes it from firebase
+  Future<void> hideEvent(String firebaseID, String userID, int eventID) async{
+      await Event.removeEventFirebase(firebaseID!);
+      await UserModel.decrementEventCounter(userID);
+      await Event.setFirebaseIDinLocal(null, eventID);
+  }
 }
+
