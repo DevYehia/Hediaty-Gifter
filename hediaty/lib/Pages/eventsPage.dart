@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hediaty/CustomWidgets/EventFilterDIalog.dart';
 import 'package:hediaty/CustomWidgets/eventCreationDialog.dart';
+import 'package:hediaty/Enums/eventCategoryEnum.dart';
+import 'package:hediaty/Enums/eventStatusEnum.dart';
 import 'package:hediaty/Models/DBManager.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/CustomWidgets/eventWidget.dart';
@@ -28,7 +31,10 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
 
-
+    List<EventWidget> eventList = [];
+    List<EventWidget> allEventList = [];
+    List<dynamic> selectedFilters = [null, null];
+    SortCategories? selectedSort;
     //attach a listener to user's event Count to update page accordingly
     @override
     void initState() {
@@ -44,7 +50,6 @@ class _EventPageState extends State<EventPage> {
       ,);
     }
 
-    List<EventWidget> eventList = [];
 
     Future setEventList() async{
       //if user is event's owner, get locally otherwise get from firebase
@@ -56,9 +61,34 @@ class _EventPageState extends State<EventPage> {
         else{
           rawEventList = await Event.getAllEventsFirebase(widget.userID);
         }
-        eventList = rawEventList.map((event) => EventWidget(event: event,
-         isOwner: widget.isOwner,
-        ),).toList();
+        if(allEventList.length != rawEventList.length){
+          allEventList = rawEventList.map((event) => EventWidget(event: event,
+          isOwner: widget.isOwner,
+          ),).toList();
+        }
+        EventCategories? selectedFilterCat;
+        EventStatus? selectedFilterStatus;        
+        if(selectedFilters.length != 0){
+          selectedFilterCat = selectedFilters[0];
+          selectedFilterStatus = selectedFilters[1];
+        }
+        //filter category
+        if(selectedFilterCat != null){
+          eventList = allEventList.where((eventWidg) => eventWidg.event.category == selectedFilterCat!.name).toList();
+        }
+        else{
+          eventList = allEventList;
+        }
+
+        //filter status
+        if(selectedFilterStatus != null){
+          if(selectedFilterStatus == EventStatus.Past){
+            eventList = eventList.where((eventWidg) => eventWidg.event.eventDate.isBefore(DateTime.now())).toList();
+          }
+          else if(selectedFilterStatus == EventStatus.Upcoming){
+            eventList = eventList.where((eventWidg) => eventWidg.event.eventDate.isAfter(DateTime.now())).toList();            
+          }
+        }
         //print("Selected Sort is $selectedSort");
         if(selectedSort == SortCategories.dateSort){
           eventList.sort((a,b) => a.event.eventDate.compareTo(b.event.eventDate));
@@ -70,7 +100,7 @@ class _EventPageState extends State<EventPage> {
       return eventList;
     }
 
-  SortCategories? selectedSort;
+
   @override
   Widget build(BuildContext context) {
 
@@ -91,6 +121,16 @@ class _EventPageState extends State<EventPage> {
         //display add event button if user owns event
         actions: 
         <Widget>[
+          IconButton(
+            onPressed: () async{
+              selectedFilters = (await showDialog(context: context, 
+              builder: (context) => EventFilterDialog(iniSelectedCat: selectedFilters[0], iniSelectedStatus: selectedFilters[1], ),))??selectedFilters;
+              setState(() {
+                
+              });
+            },
+            icon: Icon(Icons.filter_alt)
+            ),
             PopupMenuButton<SortCategories>(
                 initialValue: selectedSort,
                 icon: const Icon(
@@ -121,7 +161,7 @@ class _EventPageState extends State<EventPage> {
             );
             },
             tooltip: "Add Event",
-            icon: const Icon(Icons.add)) : Text("")
+            icon: const Icon(Icons.add)) : SizedBox.shrink()
             ,
         ],
       ),

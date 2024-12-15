@@ -179,6 +179,16 @@ class Gift{
     await giftRef.update({"pledgerID" : ""});    
   }
 
+  static Future<void> deleteGiftLocal(String giftID) async{
+    final db = await DBManager.getDataBase();
+    await db.delete("Gifts",where: "ID = '$giftID'");    
+
+  }
+
+  static Future<void> deleteGiftFirebase(String giftID) async{
+    var giftRef = await FirebaseDatabase.instance.ref("Gifts/$giftID");
+    await giftRef.remove();    
+  }
 
 }
 

@@ -1,0 +1,2 @@
+
+enum EventStatus {Past, Upcoming}

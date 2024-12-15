@@ -27,6 +27,7 @@ class GiftWidget extends StatefulWidget{
 class GiftWidgetState extends State<GiftWidget>{
   double paddingPixels = 16;
   late StreamSubscription<DatabaseEvent> pledgeListener;
+  bool isNotDeleted = true;
 
   //update gift pledge status if someone pledged a gift in realtime
   void updatePledgeStatus(String pledgerID){
@@ -58,20 +59,38 @@ class GiftWidgetState extends State<GiftWidget>{
   @override
   Widget build(BuildContext context) {
     bool showPledgedStyle = (widget.gift.pledgerID == "") ? false : true;
-    return InkWell(
+    return isNotDeleted ? InkWell(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            child: Icon(Icons.image),
-            padding: EdgeInsets.all(paddingPixels)
+          Container(child: Row(
+            children: [
+              Padding(
+              child: Icon(Icons.image),
+              padding: EdgeInsets.all(paddingPixels)
+              ),
+              Padding(
+              child:  Text(widget.gift.name!, style: TextStyle(
+                  color: (showPledgedStyle ? Colors.red : Colors.green),
+                  fontSize: 16
+                )
+                ),
+              padding: EdgeInsets.all(paddingPixels)
+              )
+              ]
+          )
           ),
-          Padding(
-          child:  Text(widget.gift.name!, style: TextStyle(
-              color: (showPledgedStyle ? Colors.red : Colors.green),
-              fontSize: 16
-            )
-            ),
-          padding: EdgeInsets.all(paddingPixels)
+          IconButton(
+            onPressed: () async{
+              //delete Gift
+              await Gift.deleteGiftLocal(widget.gift.ID);
+              await Gift.deleteGiftFirebase(widget.gift.ID);
+              isNotDeleted = false;
+              setState(() {
+                
+              });
+            }, 
+            icon: Icon(Icons.clear)
           )
 
         ],),
@@ -86,7 +105,8 @@ class GiftWidgetState extends State<GiftWidget>{
               isPledged: showPledgedStyle,
               userID: widget.userID, )));
         },
-    );
+        
+    ) : SizedBox.shrink();
     
     
   }

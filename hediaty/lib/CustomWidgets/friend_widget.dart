@@ -39,13 +39,16 @@ class FriendWidget extends StatelessWidget{
     }
 
     return InkWell(
-        child: Row(children: [
+        child: Container(
+          decoration: BoxDecoration(border: Border()),
+          child: Row(children: [
           displayedImage,
           Padding(
               padding: EdgeInsets.all(paddingPixels),
               child: Text(friend.userName, style: TextStyle(color:Colors.blue,fontFamily: "Merienda", fontSize: 24)),
           ),  
           ]
+        ),
         ),
         onTap: (){print("Hello jj");
           Navigator.push(context, MaterialPageRoute(builder: (context) => MyFriendPage(friendData: friend)));
