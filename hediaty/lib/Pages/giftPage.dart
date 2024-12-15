@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/giftCreationDialog.dart';
 import 'package:hediaty/CustomWidgets/giftWidget.dart';
+import 'package:hediaty/ModelView/GiftModelView.dart';
+import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
 
 
 class GiftPage extends StatefulWidget{
   final String title;
-  final String eventID;
+  final Event event;
   final bool isOwner;
   final String userID;
-  GiftPage({required this.title, required this.eventID, required this.isOwner, required this.userID});
+  GiftPage({required this.title,required this.event, required this.isOwner, required this.userID});
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -21,21 +23,17 @@ class GiftPage extends StatefulWidget{
 
 class GiftState extends State<GiftPage>{
 
+  late GiftModelView modelView;
 
-  List<GiftWidget> giftList = [];
-
-  Future setGiftWidgets() async{
-
-    late List<Gift> giftModelList;
-    if(widget.isOwner){
-      giftModelList = await Gift.getAllGifts(widget.eventID);
-    }
-    else{
-      giftModelList = await Gift.getAllGiftsFirebase(widget.eventID);
-    }
-    giftList = giftModelList.map((gift) => GiftWidget(gift: gift, isOwner: widget.isOwner,userID: widget.userID,),).toList();
-    print("Gift Widgets are $giftList");
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    modelView = GiftModelView(isOwner: widget.isOwner, userID: widget.userID, event: widget.event, refreshCallback: (){setState(() {
+      
+    });});
   }
+
   @override
   Widget build(BuildContext context){
 
@@ -62,7 +60,7 @@ class GiftState extends State<GiftPage>{
 
            IconButton(onPressed: (){
             showDialog(context: context, builder: (BuildContext context){
-              return GiftCreationDialog(eventID: widget.eventID, setStateCallBack: (){setState(() {
+              return GiftCreationDialog(modelView: modelView, setStateCallBack: (){setState(() {
                 
               });},);
             }
@@ -76,7 +74,7 @@ class GiftState extends State<GiftPage>{
 
       ),
       body: FutureBuilder(
-            future: setGiftWidgets(),
+            future: modelView.getGiftWidgets(),
             builder: (context, snapshot){
               if(snapshot.connectionState == ConnectionState.waiting){
                 return Center(child: CircularProgressIndicator()); 
@@ -87,7 +85,7 @@ class GiftState extends State<GiftPage>{
                 }
                 return  SingleChildScrollView(
                           child: Center( child: Column(
-                            children: giftList
+                            children: snapshot.data!
                           )
                           )
                 );

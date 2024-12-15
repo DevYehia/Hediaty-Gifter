@@ -28,7 +28,7 @@ class PledgedGiftWidgetState extends State<PledgedGiftWidget> {
 
 
   Future<void> setWidgetData() async{
-    Event giftEvent = await Event.getEventByID(widget.gift.eventID);
+    Event giftEvent = await Event.getEventByID(widget.gift.eventID.toString());
     widget.date = "${giftEvent.eventDate.day}/${giftEvent.eventDate.month}/${giftEvent.eventDate.year}";
 
   }
@@ -109,7 +109,7 @@ class PledgedGiftWidgetState extends State<PledgedGiftWidget> {
             // Unpledge button
             IconButton(
               onPressed: () async{
-                await Gift.unpledgeGift(widget.gift.ID);
+                await Gift.unpledgeGift(widget.gift.firebaseID!);
                 widget.refreshCallback();
               },
               icon: const Icon(Icons.clear),

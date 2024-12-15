@@ -63,7 +63,7 @@ class GiftDescriptionPage extends StatelessWidget{
             (isOwner || isPledged)?
             const Text(""):
             ElevatedButton(onPressed: (){
-              Gift.pledgeFriendGift(gift.ID, UserModel.getLoggedUserID());
+              Gift.pledgeFriendGift(gift.firebaseID!, UserModel.getLoggedUserID());
               Navigator.pop(context);
             },
              child: Text("Pledge"))            

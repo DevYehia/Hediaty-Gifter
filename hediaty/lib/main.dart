@@ -46,14 +46,15 @@ Future<void> resetLocalDB() async {
         ''');
   await database.execute('''
             CREATE TABLE Gifts(
-            ID TEXT PRIMARY KEY,
+            ID INTEGER PRIMARY KEY,
             name TEXT not null,
             description TEXT,
             category TEXT not null,
             price DOUBLE not null,
             isPledged BOOL,
-            eventID TEXT,
-            pledgerID TEXT
+            eventID INTEGER,
+            pledgerID TEXT,
+            firebaseID TEXT
             );
             ''');
   final tables =
@@ -90,14 +91,15 @@ Future<void> initDB() async {
             );
 
          CREATE TABLE Gifts(
-         ID TEXT PRIMARY KEY,
+         ID INTEGER PRIMARY KEY,
          name TEXT not null,
          description TEXT,
          category TEXT not null,
          price DOUBLE not null,
          isPledged BOOL,
-         eventID TEXT,
-         pledgerID TEXT
+         eventID INTEGER,
+         pledgerID TEXT,
+         firebaseID TEXT
          );
          
       ''',

@@ -51,7 +51,7 @@ class _EventWidgetState extends State<EventWidget> {
           MaterialPageRoute(
             builder: (context) => GiftPage(
               title: widget.event.eventName,
-              eventID: widget.event.eventID.toString(),
+              event: widget.event,
               isOwner: widget.isOwner,
               userID: widget.event.userID,
             ),

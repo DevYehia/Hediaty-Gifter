@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/ModelView/GiftModelView.dart';
 import 'package:hediaty/Models/gift.dart';
 
 class GiftCreationDialog extends StatelessWidget{
@@ -7,9 +8,9 @@ class GiftCreationDialog extends StatelessWidget{
   final giftCategoryController = TextEditingController();
   final giftDescriptionController = TextEditingController();
   final giftPriceController = TextEditingController();
-  final String eventID;
+  final GiftModelView modelView;
   final VoidCallback setStateCallBack;
-  GiftCreationDialog({super.key, required this.eventID, required this.setStateCallBack});
+  GiftCreationDialog({super.key, required this.modelView, required this.setStateCallBack});
 
   @override
   Widget build(BuildContext context) {
@@ -81,25 +82,8 @@ class GiftCreationDialog extends StatelessWidget{
                       onPressed: () async{
                         if(globalFormKey.currentState!.validate()){
 
-                          //insert gift into firebase
-                          //get gift ID
-                          //insert gift locally with ID
-                          String giftID = await Gift.insertGiftFireBase(
-                            giftNameController.text,
-                            giftCategoryController.text,
-                            giftDescriptionController.text,
-                            double.parse(giftPriceController.text),
-                            this.eventID
-                          );
-                          
-                          await Gift.insertGiftLocal(
-                            giftID,
-                            giftNameController.text,
-                            giftCategoryController.text,
-                            giftDescriptionController.text,
-                            double.parse(giftPriceController.text),
-                            this.eventID
-                          );                          
+                          modelView.addGift(giftNameController.text, giftCategoryController.text, giftDescriptionController.text,
+                          double.parse(giftPriceController.text));
                           setStateCallBack();
                         }
                         Navigator.of(context).pop(); // Close the dialog                        

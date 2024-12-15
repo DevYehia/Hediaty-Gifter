@@ -49,9 +49,15 @@ class Event{
     //List<Map> rawEvents = await db.rawQuery("SELECT * FROM EVENTS WHERE userID = \'$userID\'");
     final ref = FirebaseDatabase.instance.ref("Events");
     DatabaseEvent fetchedEvents = await ref.orderByChild("userID").equalTo(userID).once();
-    Map rawEvents = fetchedEvents.snapshot.value as Map;
+    Map rawEvents;
+    if(fetchedEvents.snapshot.value != null){
+      rawEvents =  fetchedEvents.snapshot.value as Map;
+    }
+    else{
+      rawEvents = {};
+    }
 
-    //print("Events are $rawEvents");
+    print("Events are $rawEvents");
     for(final rawEventKey in rawEvents.keys){
       Map rawEvent = rawEvents[rawEventKey];
       //print("raw event is $rawEvent");
