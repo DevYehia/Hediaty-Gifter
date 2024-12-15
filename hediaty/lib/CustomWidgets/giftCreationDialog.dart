@@ -20,7 +20,8 @@ class GiftCreationDialog extends StatelessWidget{
       title: Text('Add Gift'),
       content: Form(
         key: globalFormKey,
-        child: Column(
+        child: SizedBox(child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     TextFormField(
                       controller: giftNameController,
@@ -67,6 +68,7 @@ class GiftCreationDialog extends StatelessWidget{
    
                   ],
         )
+      ),
       ),
                   actions: [
                     TextButton(

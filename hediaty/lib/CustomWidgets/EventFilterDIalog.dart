@@ -57,7 +57,8 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Filters'),
-      content: Center(child: Column(
+      content: SizedBox(child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
