@@ -157,4 +157,13 @@ class Event{
     await db.update("Events", {"firebaseID": firebaseID}, where: "ID = $eventID");        
   }
 
+    static Future<void> decrementGiftCounter(String eventID) async{
+      var eventRef = FirebaseDatabase.instance.ref("Events/$eventID");
+      int giftCount = (await eventRef.child("GiftCount").get()).value as int;
+      await eventRef.update({
+       "giftCount": giftCount - 1 
+      });
+
+    }
+
 }

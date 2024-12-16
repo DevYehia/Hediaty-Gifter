@@ -28,7 +28,7 @@ class PledgedGiftWidgetState extends State<PledgedGiftWidget> {
 
 
   Future<void> setWidgetData() async{
-    Event giftEvent = await Event.getEventByID(widget.gift.eventID.toString());
+    Event giftEvent = await Event.getEventByID(widget.gift.eventID);
     widget.date = "${giftEvent.eventDate.day}/${giftEvent.eventDate.month}/${giftEvent.eventDate.year}";
 
   }

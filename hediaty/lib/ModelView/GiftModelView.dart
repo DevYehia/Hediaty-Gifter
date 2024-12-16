@@ -68,6 +68,16 @@ class GiftModelView{
     
   }
 
+  Future<void> removeGift(Gift giftToRemove) async{
+    await Gift.deleteGiftLocal(giftToRemove.ID);
+    if(giftToRemove.firebaseID != null){
+      await Gift.deleteGiftFirebase(giftToRemove.firebaseID!);
+      await Event.decrementGiftCounter(giftToRemove.firebaseID!);
+    }
+    allGiftList!.removeWhere(
+        (giftWidg) => giftWidg.gift.ID == giftToRemove.ID);
+    refreshCallback();    
+  }
 
 
 }

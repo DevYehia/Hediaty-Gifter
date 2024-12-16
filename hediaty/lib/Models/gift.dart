@@ -69,7 +69,8 @@ class Gift{
       description: rawGift["description"],
       isPledged: rawGift["isPledged"] == 0 ? false : true,
       eventID: rawGift["eventID"],
-      pledgerID: rawGift["pledgerID"]));
+      pledgerID: rawGift["pledgerID"],
+      firebaseID: rawGiftKey));
     }
     print("Gifts!!!");
     return gifts;    
@@ -170,14 +171,15 @@ class Gift{
     for(final giftKey in fetchedGiftsMap.keys){
       Map rawGift = fetchedGiftsMap[giftKey];
 
-      pledgedGifts.add(Gift(ID: giftKey,
+      pledgedGifts.add(Gift(ID: rawGift["localID"],
       name: rawGift["name"],
       price: rawGift["price"].toDouble(),
       category: rawGift["category"],
       description: rawGift["description"],
       isPledged: rawGift["isPledged"] == 0 ? false : true,
       eventID: rawGift["eventID"],
-      pledgerID: rawGift["pledgerID"]));
+      pledgerID: rawGift["pledgerID"],
+      firebaseID: giftKey));
     }
     print("Hello");
     return pledgedGifts;
