@@ -36,17 +36,23 @@ class _EventPageState extends State<EventPage> {
         isOwner: widget.isOwner,
         refreshCallback: () {
           setState(() {});
-        });
-    //listen for changes on friend's eventCount
-    if(!widget.isOwner){
-    var eventCountRef =
-            FirebaseDatabase.instance.ref("Users/${widget.userID}/eventCount");
-        eventCountRef.onValue.listen(
-        (event) {
-            setState(() {});
         },
-        );
-    }
+        addedUIUpdate: addedEventNotif,
+        editedUIUpdate: editedEventNotif,
+        removedUIUpdate: removedEventNotif);
+  }
+
+
+  void addedEventNotif(){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("New Event Has Been Added")));
+  }
+
+  void removedEventNotif(){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("An Event has been removed ):")));    
+  }
+
+  void editedEventNotif(){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("An Event has been edited")));       
   }
 
   @override

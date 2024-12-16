@@ -33,6 +33,9 @@ class _EventWidgetState extends State<EventWidget> {
     // TODO: implement initState
     super.initState();
     nameColor = widget.event.firebaseID == null ? Colors.red : Colors.blue;
+    if(!widget.isOwner){
+      widget.modelView.listenForEventChange(widget.event);
+    }
   }
 
   @override

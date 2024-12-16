@@ -11,7 +11,7 @@ class Gift{
   String category;
   double price;
   bool isPledged;
-  dynamic eventID;
+  dynamic eventID; //dynamic because it can be int (local ID) or String (Firebase ID)
   String? firebaseID;
   String? pledgerID;
   Gift({required this.ID,
@@ -39,7 +39,8 @@ class Gift{
       description: rawGift["description"],
       isPledged: rawGift["isPledged"] == 0 ? false : true,
       eventID: rawGift["eventID"],
-      pledgerID: rawGift["pledgerID"]));
+      pledgerID: rawGift["pledgerID"],
+      firebaseID: rawGift["firebaseID"]));
     }
     print("Gifts!!!");
     return gifts;    

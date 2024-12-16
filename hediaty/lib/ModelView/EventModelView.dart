@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:ui';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/eventWidget.dart';
 import 'package:hediaty/Enums/eventCategoryEnum.dart';
 import 'package:hediaty/Enums/eventStatusEnum.dart';
@@ -6,6 +9,7 @@ import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Util/EventSortStrategy.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 
 class EventModelView {
   List<EventWidget> eventList = []; //event Widget List after filters
@@ -18,11 +22,17 @@ class EventModelView {
   String userID;
   bool isOwner;
   VoidCallback refreshCallback;
+  VoidCallback? addedUIUpdate;
+  VoidCallback? editedUIUpdate;
+  VoidCallback? removedUIUpdate;  
 
   EventModelView(
       {required this.userID,
       required this.isOwner,
-      required this.refreshCallback});
+      required this.refreshCallback,
+      this.addedUIUpdate,
+      this.editedUIUpdate,
+      this.removedUIUpdate});
 
   //change filters applied to eventList
   //called when user changes filters
@@ -88,6 +98,11 @@ class EventModelView {
       eventList = selectedSort!.sort(eventList);
     }
 
+    //attach listener for updates in event Count
+    if (!isOwner) {
+      Event.attachListenerForEventCount(userID, compareEventCountWithRemote);
+    }
+
     return eventList;
   }
 
@@ -121,7 +136,7 @@ class EventModelView {
     refreshCallback();
   }
 
-  Future<String> publishEvent(Event eventToPublish) async{
+  Future<String> publishEvent(Event eventToPublish) async {
     Map<String, Object?> eventData = {
       'name': eventToPublish.eventName,
       'date': dateFormatter.format(eventToPublish.eventDate),
@@ -129,7 +144,7 @@ class EventModelView {
       'location': eventToPublish.location,
       'description': eventToPublish.description ?? "",
       'userID': UserModel.getLoggedUserID(),
-      'localID' : eventToPublish.eventID
+      'localID': eventToPublish.eventID
     };
 
     String firebaseID = await Event.insertEventFireBase(eventData);
@@ -137,9 +152,8 @@ class EventModelView {
 
     //set firebaseID in Event Object in the widget
     //allEventList![allEventList!.indexWhere(
-            //(eventWidg) => eventWidg.event.eventID == eventToPublish.eventID)].event.firebaseID = firebaseID;
+    //(eventWidg) => eventWidg.event.eventID == eventToPublish.eventID)].event.firebaseID = firebaseID;
     return firebaseID;
-    
   }
 
   Future<void> editEvent(
@@ -174,12 +188,15 @@ class EventModelView {
 
     //update widget and refresh
     allEventList![allEventList!.indexWhere(
-            (eventWidg) => eventWidg.event.eventID == eventToModify.eventID)].event = eventToModify;
+            (eventWidg) => eventWidg.event.eventID == eventToModify.eventID)]
+        .event = eventToModify;
   }
 
   Future<void> removeEvent(Event eventToRemove) async {
+    //TODO Remove all related gifts
+
     await Event.removeEventLocal(eventToRemove.eventID);
-    if(eventToRemove.firebaseID != null){
+    if (eventToRemove.firebaseID != null) {
       await Event.removeEventFirebase(eventToRemove.firebaseID!);
       await UserModel.decrementEventCounter(eventToRemove.userID);
     }
@@ -189,10 +206,66 @@ class EventModelView {
   }
 
   //removes it from firebase
-  Future<void> hideEvent(String firebaseID, String userID, int eventID) async{
-      await Event.removeEventFirebase(firebaseID!);
-      await UserModel.decrementEventCounter(userID);
-      await Event.setFirebaseIDinLocal(null, eventID);
+  Future<void> hideEvent(String firebaseID, String userID, int eventID) async {
+    //TODO Handle gift hiding or stop hiding event if some gifts are public
+
+    await Event.removeEventFirebase(firebaseID!);
+    await UserModel.decrementEventCounter(userID);
+    await Event.setFirebaseIDinLocal(null, eventID);
+  }
+
+  void compareEventCountWithRemote(int newEventCount) {
+    //user added an event
+    print("New Event Count is $newEventCount");
+    if (newEventCount > allEventList!.length) {
+      print("Am called");
+      allEventList = null;
+      refreshCallback();
+      if(addedUIUpdate != null) addedUIUpdate!();
+    }
+
+    //user deleted an event
+    else if (newEventCount < allEventList!.length) {
+      print("Am called");
+      allEventList = null;
+      refreshCallback();
+      if(removedUIUpdate != null) removedUIUpdate!();
+    }
+  }
+
+  void listenForEventChange(Event oldEvent) {
+    var eventChangeListener =
+        Event.attachListenerForEventChange(oldEvent, updateEvent);
+  }
+
+  void updateEvent(Event newEvent) {
+    Event oldEvent = allEventList![allEventList!.indexWhere(
+            (eventWidg) => eventWidg.event.firebaseID == newEvent.firebaseID)]
+        .event;
+
+    //update if widgets mismatch
+    if(!compareEvents(oldEvent, newEvent)){
+      //update widget and refresh
+      allEventList![allEventList!.indexWhere(
+              (eventWidg) => eventWidg.event.firebaseID == newEvent.firebaseID)]
+          .event = newEvent;
+
+      refreshCallback();
+      if(editedUIUpdate != null) editedUIUpdate!();
+    }
+  }
+
+  bool compareEvents(Event event1, Event event2){
+
+    if(event1.eventName != event2.eventName ||
+       event1.eventDate != event2.eventDate ||
+       event1.category != event2.category ||
+       event1.description != event2.description ||
+       event1.location != event2.location){
+        return false;
+       }
+
+    return true;
+
   }
 }
-

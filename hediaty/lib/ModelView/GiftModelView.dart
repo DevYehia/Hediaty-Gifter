@@ -19,13 +19,15 @@ class GiftModelView{
   Future<List<GiftWidget>> getGiftWidgets() async{
 
     late List<Gift> giftModelList;
-    if(isOwner){
-      giftModelList = await Gift.getAllGifts(event.eventID);
+    if(allGiftList == null){
+      if(isOwner){
+        giftModelList = await Gift.getAllGifts(event.eventID);
+      }
+      else{
+        giftModelList = await Gift.getAllGiftsFirebase(event.firebaseID!);
+      }
+      allGiftList = giftModelList.map((gift) => GiftWidget(gift: gift, isOwner: isOwner,userID: userID,modelView: this,),).toList();
     }
-    else{
-      giftModelList = await Gift.getAllGiftsFirebase(event.firebaseID!);
-    }
-    allGiftList = giftModelList.map((gift) => GiftWidget(gift: gift, isOwner: isOwner,userID: userID,modelView: this,),).toList();
     print("Gift Widgets are $giftList");
     giftList = allGiftList!;
     return giftList;
@@ -72,12 +74,19 @@ class GiftModelView{
     await Gift.deleteGiftLocal(giftToRemove.ID);
     if(giftToRemove.firebaseID != null){
       await Gift.deleteGiftFirebase(giftToRemove.firebaseID!);
-      await Event.decrementGiftCounter(giftToRemove.firebaseID!);
+      await Event.decrementGiftCounter(event.firebaseID!);
     }
     allGiftList!.removeWhere(
         (giftWidg) => giftWidg.gift.ID == giftToRemove.ID);
     refreshCallback();    
   }
 
+  //removes it from firebase
+  Future<void> hideGift(String firebaseID, int giftID) async{
+      await Gift.deleteGiftFirebase(firebaseID);
+      await Gift.setFirebaseIDinLocal(null, giftID);
+      //String eventFirebaseID = await Event.getFirebaseID(localEventID);
+      await Event.decrementGiftCounter(event.firebaseID!);
+  }
 
 }

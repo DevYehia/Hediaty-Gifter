@@ -105,18 +105,20 @@ class GiftWidgetState extends State<GiftWidget>{
                             modelView: widget.modelView);
                       });
                   setState(() {});
-                } else if (value == EventOption.Delete) {
-                  await widget.modelView.removeEvent(widget.event);
+                }
+                */ 
+                else if (value == EventOption.Delete) {
+                  await widget.modelView.removeGift(widget.gift);
                 }
                 else if(value == EventOption.Hide){
-                  await widget.modelView.hideEvent(widget.event.firebaseID!, widget.event.userID, widget.event.eventID);
-                  widget.event.firebaseID = null;
+                  await widget.modelView.hideGift(widget.gift.firebaseID!, widget.gift.ID);
+                  widget.gift.firebaseID = null;
                   setState(() {});
-                }*/
+                }
               },
               itemBuilder: (context) => [
 
-                if(widget.gift.firebaseID == null)
+                if(widget.gift.firebaseID == null && widget.modelView.event.firebaseID != null)
                 PopupMenuItem(
                     child: Text("Publish"), value: EventOption.Publish),
                 if(widget.gift.firebaseID != null)

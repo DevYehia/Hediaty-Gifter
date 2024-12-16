@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:firebase_database/firebase_database.dart';
@@ -159,11 +160,58 @@ class Event{
 
     static Future<void> decrementGiftCounter(String eventID) async{
       var eventRef = FirebaseDatabase.instance.ref("Events/$eventID");
-      int giftCount = (await eventRef.child("GiftCount").get()).value as int;
+      int giftCount = (await eventRef.child("giftCount").get()).value as int;
       await eventRef.update({
        "giftCount": giftCount - 1 
       });
 
     }
 
+  static Future<String> getFirebaseID(int localID)async{
+    final db = await DBManager.getDataBase();  
+    Map<String, Object?> eventMap = (await db.rawQuery("SELECT firebaseID FROM EVENTS WHERE ID = $localID"))[0];
+    return eventMap["firebaseID"] as String;  
+  }
+
+  static StreamSubscription<DatabaseEvent> attachListenerForEventCount(String userID, void Function(int) callback){
+
+
+      //listen for Changes on event count
+      var eventCountRef = FirebaseDatabase.instance.ref("Users/$userID/eventCount");
+      var eventCountListener = eventCountRef.onValue.listen((updatedCount) { 
+          print("Event Count Changed!!");
+          callback(updatedCount.snapshot.value as int);
+        }
+      ,);    
+      return eventCountListener;
+
+  }
+
+  static StreamSubscription<DatabaseEvent> attachListenerForEventChange(Event oldEvent, void Function(Event) callback){
+
+
+      //listen for Changes on event count
+      var eventRef = FirebaseDatabase.instance.ref("Events/${oldEvent.firebaseID!}");
+      var eventListener = eventRef.onValue.listen((updatedEvent) { 
+
+          Map rawEvent;
+          Event newEvent;
+          if(updatedEvent.snapshot.value != null){
+            rawEvent = updatedEvent.snapshot.value as Map;
+            newEvent = Event(eventID: rawEvent["localID"],
+                            eventName: rawEvent["name"],
+                            eventDate: DateFormat("d/M/y").parse(rawEvent["date"]),
+                            category: rawEvent["category"],
+                            location: rawEvent["location"],
+                            description: rawEvent["description"],
+                            userID: rawEvent["userID"],
+                            firebaseID: updatedEvent.snapshot.key!);
+            callback(newEvent);
+          }
+
+        }
+      ,);    
+      return eventListener;
+
+  }
 }
