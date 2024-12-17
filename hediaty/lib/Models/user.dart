@@ -166,5 +166,18 @@ class UserModel{
 
     }
 
+  static void attachListenerForEventCount(String userID, void Function(int, String) callback){
+
+
+      //listen for Changes on event count
+      var eventCountRef = FirebaseDatabase.instance.ref("Users/$userID/eventCount");
+      var eventCountListener = eventCountRef.onValue.listen((updatedCount) { 
+          print("Event Count Changed!!");
+          callback(updatedCount.snapshot.value as int, userID);
+        }
+      ,);    
+
+  }
+
   
 }

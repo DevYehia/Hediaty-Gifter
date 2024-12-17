@@ -5,6 +5,7 @@
 All of which are aligned horizontally
 */
 import 'package:flutter/material.dart';
+import 'package:hediaty/ModelView/UserModelView.dart';
 import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Pages/friendPage.dart';
 
@@ -16,12 +17,14 @@ import 'package:hediaty/Pages/friendPage.dart';
 class FriendWidget extends StatelessWidget{
   //Image? friendImage;
   final UserModel friend;
-  final int eventCount;
+  int eventCount;
   final double paddingPixels = 16;
-  const FriendWidget({super.key, required this.friend, required this.eventCount});
+  final UserViewModel viewModel;
+  FriendWidget({super.key, required this.friend, required this.eventCount, required this.viewModel});
   
   @override
   Widget build(BuildContext context) {
+    viewModel.listenForEventCount(friend.userID);
 
     late Padding displayedImage;
     if(eventCount != 0 ){
