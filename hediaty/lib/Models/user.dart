@@ -179,5 +179,16 @@ class UserModel{
 
   }
 
+  static void attachListenerForFriends(String userID, void Function(int) callback){
+    var friendsRef = FirebaseDatabase.instance.ref("Users/$userID/friends");
+    friendsRef.onValue.listen((newFriends){
+      if(newFriends.snapshot.value != null){
+        Map friendsMap = newFriends.snapshot.value as Map;
+        callback(friendsMap.keys.length);
+      }
+    }
+    );
+  }
+
   
 }
