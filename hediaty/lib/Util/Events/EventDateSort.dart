@@ -1,6 +1,6 @@
 
 import 'package:hediaty/CustomWidgets/eventWidget.dart';
-import 'package:hediaty/Util/EventSortStrategy.dart';
+import 'package:hediaty/Util/Events/EventSortStrategy.dart';
 
 class Eventdatesort implements EventSortStrategy{
   @override

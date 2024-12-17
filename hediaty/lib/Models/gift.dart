@@ -78,7 +78,7 @@ class Gift{
   }
 
 
-  static Future<int> insertGiftLocal(String name, String category, String? description, double price, int eventID) async{
+  static Future<int> insertGiftLocal(int? ID, String name, String category, String? description, double price, int eventID) async{
     Map<String, Object?> giftData = {
       "name" : name,
       "description" : description,
@@ -88,6 +88,7 @@ class Gift{
       "eventID" : eventID,
       "pledgerID" : ""
     };
+    if(ID != null) giftData["ID"] = ID;
 
 
 
@@ -158,6 +159,20 @@ class Gift{
       var giftPledgeListener = giftPledgerRef.onValue.listen((event) { 
           print("I am called");
           callback(event.snapshot.value as String);
+        }
+      ,);    
+      return giftPledgeListener;
+
+  }
+
+  static StreamSubscription<DatabaseEvent> attachListenerForGiftCount(String eventID, void Function(int) callback){
+
+
+      //listen for Pledging on Gift with giftID
+      var giftCountRef = FirebaseDatabase.instance.ref("Events/$eventID/giftCount");
+      var giftPledgeListener = giftCountRef.onValue.listen((event) { 
+          print("Got the Gift Count!");
+          callback(event.snapshot.value as int);
         }
       ,);    
       return giftPledgeListener;

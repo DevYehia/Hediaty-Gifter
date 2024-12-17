@@ -7,7 +7,8 @@ import 'package:hediaty/Enums/eventCategoryEnum.dart';
 import 'package:hediaty/Enums/eventStatusEnum.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/user.dart';
-import 'package:hediaty/Util/EventSortStrategy.dart';
+import 'package:hediaty/Util/Events/EventFilter.dart';
+import 'package:hediaty/Util/Events/EventSortStrategy.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 
@@ -17,14 +18,15 @@ class EventModelView {
   DateFormat dateFormatter = DateFormat("d/M/y");
   //First Filter is Category Filter
   //second filter is Status Filter
-  List<dynamic> selectedFilters = [null, null];
+  List<EventFilter> selectedFilters = [];
   EventSortStrategy? selectedSort;
   String userID;
   bool isOwner;
   VoidCallback refreshCallback;
   VoidCallback? addedUIUpdate;
   VoidCallback? editedUIUpdate;
-  VoidCallback? removedUIUpdate;  
+  VoidCallback? removedUIUpdate;
+  late var listener;
 
   EventModelView(
       {required this.userID,
@@ -36,7 +38,7 @@ class EventModelView {
 
   //change filters applied to eventList
   //called when user changes filters
-  void setFilters(List<dynamic> newFilters) {
+  void setFilters(List<EventFilter> newFilters) {
     selectedFilters = newFilters;
   }
 
@@ -64,44 +66,19 @@ class EventModelView {
           )
           .toList();
     }
-    EventCategories? selectedFilterCat;
-    EventStatus? selectedFilterStatus;
-    if (selectedFilters.length != 0) {
-      selectedFilterCat = selectedFilters[0];
-      selectedFilterStatus = selectedFilters[1];
-    }
-    //filter category
-    if (selectedFilterCat != null) {
-      eventList = allEventList!
-          .where((eventWidg) =>
-              eventWidg.event.category == selectedFilterCat!.name)
-          .toList();
-    } else {
-      eventList = allEventList!;
+
+    eventList = allEventList!;
+
+    for(final filter in selectedFilters){
+      eventList = filter.filter(eventList);
     }
 
-    //filter status
-    if (selectedFilterStatus != null) {
-      if (selectedFilterStatus == EventStatus.Past) {
-        eventList = eventList
-            .where((eventWidg) =>
-                eventWidg.event.eventDate.isBefore(DateTime.now()))
-            .toList();
-      } else if (selectedFilterStatus == EventStatus.Upcoming) {
-        eventList = eventList
-            .where((eventWidg) =>
-                eventWidg.event.eventDate.isAfter(DateTime.now()))
-            .toList();
-      }
-    }
+
     if (selectedSort != null) {
       eventList = selectedSort!.sort(eventList);
     }
 
-    //attach listener for updates in event Count
-    if (!isOwner) {
-      Event.attachListenerForEventCount(userID, compareEventCountWithRemote);
-    }
+    Event.attachListenerForEventCount(userID, compareEventCountWithRemote);
 
     return eventList;
   }
@@ -214,22 +191,43 @@ class EventModelView {
     await Event.setFirebaseIDinLocal(null, eventID);
   }
 
-  void compareEventCountWithRemote(int newEventCount) {
+  void compareEventCountWithRemote(int newEventCount) async {
     //user added an event
     print("New Event Count is $newEventCount");
-    if (newEventCount > allEventList!.length) {
-      print("Am called");
-      allEventList = null;
-      refreshCallback();
-      if(addedUIUpdate != null) addedUIUpdate!();
-    }
+    if (!isOwner) {
+      if (newEventCount > allEventList!.length) {
+        print("Am called");
+        allEventList = null;
+        refreshCallback();
+        if (addedUIUpdate != null) addedUIUpdate!();
+      }
 
-    //user deleted an event
-    else if (newEventCount < allEventList!.length) {
-      print("Am called");
-      allEventList = null;
-      refreshCallback();
-      if(removedUIUpdate != null) removedUIUpdate!();
+      //user deleted an event
+      else if (newEventCount < allEventList!.length) {
+        print("Am called");
+        allEventList = null;
+        refreshCallback();
+        if (removedUIUpdate != null) removedUIUpdate!();
+      }
+    } else { //sync events from firebase to local, if there are extra events
+      if (newEventCount > allEventList!.length) {
+        List<Event> rawEventList = await Event.getAllEventsFirebase(userID);
+        for (final rawEvent in rawEventList) {
+          Map<String, Object?> eventData = {
+            'ID': rawEvent.eventID,
+            'name': rawEvent.eventName,
+            'date': dateFormatter.format(rawEvent.eventDate),
+            'category': rawEvent.category,
+            'location': rawEvent.location,
+            'description': rawEvent.description,
+            'userID': UserModel.getLoggedUserID(),
+            'firebaseID': rawEvent.firebaseID
+          };
+          await Event.insertEventLocal(eventData);
+        }
+        allEventList = null;
+        refreshCallback();
+      }
     }
   }
 
@@ -244,28 +242,26 @@ class EventModelView {
         .event;
 
     //update if widgets mismatch
-    if(!compareEvents(oldEvent, newEvent)){
+    if (!compareEvents(oldEvent, newEvent)) {
       //update widget and refresh
       allEventList![allEventList!.indexWhere(
               (eventWidg) => eventWidg.event.firebaseID == newEvent.firebaseID)]
           .event = newEvent;
 
       refreshCallback();
-      if(editedUIUpdate != null) editedUIUpdate!();
+      if (editedUIUpdate != null) editedUIUpdate!();
     }
   }
 
-  bool compareEvents(Event event1, Event event2){
-
-    if(event1.eventName != event2.eventName ||
-       event1.eventDate != event2.eventDate ||
-       event1.category != event2.category ||
-       event1.description != event2.description ||
-       event1.location != event2.location){
-        return false;
-       }
+  bool compareEvents(Event event1, Event event2) {
+    if (event1.eventName != event2.eventName ||
+        event1.eventDate != event2.eventDate ||
+        event1.category != event2.category ||
+        event1.description != event2.description ||
+        event1.location != event2.location) {
+      return false;
+    }
 
     return true;
-
   }
 }

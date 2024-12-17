@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/giftCreationDialog.dart';
+import 'package:hediaty/CustomWidgets/giftFilterDialog.dart';
 import 'package:hediaty/CustomWidgets/giftWidget.dart';
 import 'package:hediaty/ModelView/GiftModelView.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
+import 'package:hediaty/Util/Gifts/GiftFilter.dart';
+import 'package:hediaty/Util/Gifts/GiftNameSort.dart';
+import 'package:hediaty/Util/Gifts/GiftPriceSort.dart';
+import 'package:hediaty/Util/Gifts/GiftSortStrategy.dart';
 
 
 class GiftPage extends StatefulWidget{
@@ -24,6 +29,8 @@ class GiftPage extends StatefulWidget{
 class GiftState extends State<GiftPage>{
 
   late GiftModelView modelView;
+  GiftSortStrategy? selectedSort;
+
 
   @override
   void initState() {
@@ -51,14 +58,45 @@ class GiftState extends State<GiftPage>{
         title: Text(widget.title),
 
         //if gift's owner show actions otherwise no
-        actions: widget.isOwner ? 
+        actions: 
           [
-          IconButton(
-           onPressed: (){print("Barcode yet to be implemented");},
-           icon: Icon(Icons.barcode_reader)
-           ),
-
-           IconButton(onPressed: (){
+            IconButton(
+                onPressed: () async {
+                  List<GiftFilter> selectedFilters = [];
+                  selectedFilters = (await showDialog(
+                        context: context,
+                        builder: (context) => GiftFilterDialog(
+                        ),
+                      )) ??
+                      selectedFilters;
+                  modelView.setFilters(selectedFilters);
+                  setState(() {});
+                },
+                icon: Icon(Icons.filter_alt)),
+            PopupMenuButton<GiftSortStrategy>(
+              initialValue: selectedSort,
+              icon: const Icon(
+                Icons.menu,
+              ), //use this icon
+              onSelected: (GiftSortStrategy item) {
+                setState(() {
+                  selectedSort = item;
+                  modelView.setSort(item);
+                });
+              },
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<GiftSortStrategy>>[
+                PopupMenuItem<GiftSortStrategy>(
+                  value: GiftPriceSort(),
+                  child: Text('Price Sort'),
+                ),
+                PopupMenuItem<GiftSortStrategy>(
+                  value: GiftNameSort(),
+                  child: Text('Name Sort'),
+                ),
+              ],
+            ),
+           widget.isOwner ? IconButton(onPressed: (){
             showDialog(context: context, builder: (BuildContext context){
               return GiftCreationDialog(modelView: modelView, setStateCallBack: (){setState(() {
                 
@@ -68,9 +106,8 @@ class GiftState extends State<GiftPage>{
 
            },
            icon: Icon(Icons.add)
-           )
-        ]: 
-        [],
+           ):SizedBox.shrink()
+        ]
 
       ),
       body: FutureBuilder(

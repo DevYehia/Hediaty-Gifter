@@ -61,7 +61,7 @@ class GiftWidgetState extends State<GiftWidget>{
 
   @override
   Widget build(BuildContext context) {
-    bool showPledgedStyle = (widget.gift.pledgerID == "") ? false : true;
+    bool showPledgedStyle = (widget.gift.pledgerID == "" || widget.gift.pledgerID == null) ? false : true;
     return isNotDeleted ? InkWell(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,20 +110,20 @@ class GiftWidgetState extends State<GiftWidget>{
                 else if (value == EventOption.Delete) {
                   await widget.modelView.removeGift(widget.gift);
                 }
-                else if(value == EventOption.Hide){
+                /*else if(value == EventOption.Hide){
                   await widget.modelView.hideGift(widget.gift.firebaseID!, widget.gift.ID);
                   widget.gift.firebaseID = null;
                   setState(() {});
-                }
+                }*/
               },
               itemBuilder: (context) => [
 
                 if(widget.gift.firebaseID == null && widget.modelView.event.firebaseID != null)
                 PopupMenuItem(
                     child: Text("Publish"), value: EventOption.Publish),
-                if(widget.gift.firebaseID != null)
+                /*if(widget.gift.firebaseID != null)
                 PopupMenuItem(
-                    child: Text("Hide"), value: EventOption.Hide),                
+                    child: Text("Hide"), value: EventOption.Hide),*/                
                 if (widget.gift.pledgerID == null || widget.gift.pledgerID == "") //display event editing only if it is not past event
                   PopupMenuItem(value: EventOption.Edit, child: Text("Edit")),
                 PopupMenuItem(value: EventOption.Delete, child: Text("Delete"))

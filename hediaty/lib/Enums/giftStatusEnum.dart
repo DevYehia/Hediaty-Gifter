@@ -1,0 +1,1 @@
+enum GiftStatus {Pledged, NotPledged}

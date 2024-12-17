@@ -1,0 +1,1 @@
+enum PrivacyStates {Published, Hidden}

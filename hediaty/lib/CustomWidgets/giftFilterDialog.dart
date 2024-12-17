@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/Enums/eventCategoryEnum.dart';
 import 'package:hediaty/Enums/eventStatusEnum.dart';
+import 'package:hediaty/Enums/giftCategoryEnum.dart';
+import 'package:hediaty/Enums/giftStatusEnum.dart';
 import 'package:hediaty/Enums/privacyEnum.dart';
-import 'package:hediaty/Util/Events/EventCategoryFilter.dart';
-import 'package:hediaty/Util/Events/EventDateFilter.dart';
-import 'package:hediaty/Util/Events/EventFilter.dart';
-import 'package:hediaty/Util/Events/EventPrivacyFilter.dart';
+import 'package:hediaty/Util/Gifts/GiftCategoryFilter.dart';
+import 'package:hediaty/Util/Gifts/GiftFilter.dart';
+import 'package:hediaty/Util/Gifts/GiftPrivacyFilter.dart';
+import 'package:hediaty/Util/Gifts/GiftStatusFilter.dart';
 
-class EventFilterDialog extends StatefulWidget {
-  EventFilterDialog({super.key});
+class GiftFilterDialog extends StatefulWidget {
+  GiftFilterDialog({super.key});
 
   @override
-  State<EventFilterDialog> createState() => _EventFilterDialogState();
+  State<GiftFilterDialog> createState() => _GiftFilterDialogState();
 }
 
-class _EventFilterDialogState extends State<EventFilterDialog> {
+class _GiftFilterDialogState extends State<GiftFilterDialog> {
 
-  static EventCategories? selectedCat;
-  static EventStatus? selectedStatus;
+  static GiftCategories? selectedCat;
+  static GiftStatus? selectedStatus;
   static PrivacyStates? selectedPrivacy;
-  List<EventFilter> filters = [];
-  late List<DropdownMenuItem<EventCategories>> catMenuList;
-  late List<DropdownMenuItem<EventStatus>> statusMenuList;
+  List<GiftFilter> filters = [];
+  late List<DropdownMenuItem<GiftCategories>> catMenuList;
+  late List<DropdownMenuItem<GiftStatus>> statusMenuList;
   late List<DropdownMenuItem<PrivacyStates>> privacyMenuList;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    catMenuList = EventCategories.values
+    catMenuList = GiftCategories.values
         .map((cat) => DropdownMenuItem(value: cat, child: Text("${cat.name}")))
         .toList();
     catMenuList.add(DropdownMenuItem(child: Text("None"), value: null));
-    statusMenuList = EventStatus.values
+    statusMenuList = GiftStatus.values
         .map((status) =>
             DropdownMenuItem(value: status, child: Text("${status.name}")))
         .toList();
@@ -106,13 +108,13 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
         TextButton(
           onPressed: () {
             if(selectedCat != null){
-              filters.add(EventCategoryFilter(selectedCat!));
+              filters.add(GiftCategoryFilter(selectedCat!));
             }
             if(selectedStatus != null){
-              filters.add(EventDateFilter(selectedStatus!));
+              filters.add(GiftStatusFilter(selectedStatus!));
             }
             if(selectedPrivacy != null){
-              filters.add(EventPrivacyFilter(selectedPrivacy!));
+              filters.add(GiftPrivacyFilter(selectedPrivacy!));
             }
             Navigator.pop(
                 context, filters); // Close the dialog

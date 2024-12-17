@@ -3,18 +3,30 @@ import 'package:hediaty/CustomWidgets/giftWidget.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
 import 'package:hediaty/Models/gift.dart';
+import 'package:hediaty/Util/Gifts/GiftFilter.dart';
+import 'package:hediaty/Util/Gifts/GiftSortStrategy.dart';
 
 class GiftModelView{
 
 
   List<GiftWidget>? allGiftList;
   List<GiftWidget> giftList = [];
+  List<GiftFilter> filters = [];
+  GiftSortStrategy? selectedSort;
   final Event event;
   final bool isOwner;
   final String userID;
   VoidCallback refreshCallback;
   GiftModelView({required this.isOwner, required this.event, required this.userID, required this.refreshCallback});
 
+
+  void setFilters(List<GiftFilter> newFilters){
+    filters = newFilters;
+  }
+
+  void setSort(GiftSortStrategy newSort){
+    selectedSort = newSort;
+  }
 
   Future<List<GiftWidget>> getGiftWidgets() async{
 
@@ -28,8 +40,19 @@ class GiftModelView{
       }
       allGiftList = giftModelList.map((gift) => GiftWidget(gift: gift, isOwner: isOwner,userID: userID,modelView: this,),).toList();
     }
+
+    if(event.firebaseID != null){ //attach listener for published Event ONLY
+      Gift.attachListenerForGiftCount(event.firebaseID!, compareGiftCountWithRemote);
+    }
     print("Gift Widgets are $giftList");
     giftList = allGiftList!;
+    for(final filter in filters){
+      giftList = filter.filter(giftList);
+    }
+    if(selectedSort != null){
+      giftList = selectedSort!.sort(giftList);
+    }
+
     return giftList;
   }
 
@@ -40,7 +63,7 @@ class GiftModelView{
       double giftPrice) async {
 
     //insert Locally ONLY!!!
-    int giftID = await Gift.insertGiftLocal(giftName, giftCategory, giftDescription, giftPrice, event.eventID);
+    int giftID = await Gift.insertGiftLocal(null, giftName, giftCategory, giftDescription, giftPrice, event.eventID);
     Gift addedGift = Gift(
         ID: giftID,
         name: giftName,
@@ -87,6 +110,42 @@ class GiftModelView{
       await Gift.setFirebaseIDinLocal(null, giftID);
       //String eventFirebaseID = await Event.getFirebaseID(localEventID);
       await Event.decrementGiftCounter(event.firebaseID!);
+  }
+
+  void compareGiftCountWithRemote(int newGiftCount) async {
+    //user added an event
+
+    if (!isOwner) {
+      if (newGiftCount > allGiftList!.length) {
+        print("Am called");
+        allGiftList = null;
+        refreshCallback();
+        //if (addedUIUpdate != null) addedUIUpdate!();
+      }
+
+      //user deleted an event
+      else if (newGiftCount < allGiftList!.length) {
+        print("Am called");
+        allGiftList = null;
+        refreshCallback();
+        //if (removedUIUpdate != null) removedUIUpdate!();
+      }
+    } else { //sync events from firebase to local, if there are extra gifts
+      if (newGiftCount > allGiftList!.length) {
+        //can't be null, since listener attached only to published events
+        List<Gift> rawGiftList = await Gift.getAllGiftsFirebase(event.firebaseID!); 
+        for (final rawGift in rawGiftList) {
+          await Gift.insertGiftLocal(rawGift.ID, rawGift.name, rawGift.category, rawGift.description, rawGift.price,
+           event.eventID);
+          await Gift.setFirebaseIDinLocal(rawGift.firebaseID, rawGift.ID);
+          if(rawGift.pledgerID != null){
+            await Gift.updatePledgerLocal(rawGift.pledgerID!, rawGift.ID);
+          }
+        }
+        allGiftList = null;
+        refreshCallback();
+      }
+    }
   }
 
 }

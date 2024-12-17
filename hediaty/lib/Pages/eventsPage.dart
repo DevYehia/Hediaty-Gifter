@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/EventFilterDIalog.dart';
 import 'package:hediaty/CustomWidgets/eventCreationDialog.dart';
 import 'package:hediaty/ModelView/EventModelView.dart';
-import 'package:hediaty/Util/EventDateSort.dart';
-import 'package:hediaty/Util/EventNameSort.dart';
-import 'package:hediaty/Util/EventSortStrategy.dart';
+import 'package:hediaty/Util/Events/EventDateSort.dart';
+import 'package:hediaty/Util/Events/EventFilter.dart';
+import 'package:hediaty/Util/Events/EventNameSort.dart';
+import 'package:hediaty/Util/Events/EventSortStrategy.dart';
 
 enum SortCategories { nameSort, dateSort }
 
@@ -74,12 +75,10 @@ class _EventPageState extends State<EventPage> {
           actions: <Widget>[
             IconButton(
                 onPressed: () async {
-                  List<dynamic> selectedFilters = [null, null];
+                  List<EventFilter> selectedFilters = [];
                   selectedFilters = (await showDialog(
                         context: context,
                         builder: (context) => EventFilterDialog(
-                          iniSelectedCat: modelView.selectedFilters[0],
-                          iniSelectedStatus: modelView.selectedFilters[1],
                         ),
                       )) ??
                       selectedFilters;

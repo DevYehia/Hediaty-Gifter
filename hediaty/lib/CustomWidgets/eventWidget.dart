@@ -112,20 +112,21 @@ class _EventWidgetState extends State<EventWidget> {
                 } else if (value == EventOption.Delete) {
                   await widget.modelView.removeEvent(widget.event);
                 }
-                else if(value == EventOption.Hide){
+                /*else if(value == EventOption.Hide){
                   await widget.modelView.hideEvent(widget.event.firebaseID!, widget.event.userID, widget.event.eventID);
                   widget.event.firebaseID = null;
                   setState(() {});
-                }
+                }*/
               },
               itemBuilder: (context) => [
 
                 if(widget.event.firebaseID == null)
                 PopupMenuItem(
                     child: Text("Publish"), value: EventOption.Publish),
-                if(widget.event.firebaseID != null)
+                /*if(widget.event.firebaseID != null)
                 PopupMenuItem(
-                    child: Text("Hide"), value: EventOption.Hide),                
+                    child: Text("Hide"), value: EventOption.Hide),
+                */                
                 if (widget.event.eventDate.isAfter(DateTime
                     .now())) //display event editing only if it is not past event
                   PopupMenuItem(value: EventOption.Edit, child: Text("Edit")),
