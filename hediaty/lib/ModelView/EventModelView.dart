@@ -26,7 +26,7 @@ class EventModelView {
   VoidCallback? addedUIUpdate;
   VoidCallback? editedUIUpdate;
   VoidCallback? removedUIUpdate;
-  late var listener;
+  StreamSubscription<DatabaseEvent>? listener;
 
   EventModelView(
       {required this.userID,
@@ -78,7 +78,7 @@ class EventModelView {
       eventList = selectedSort!.sort(eventList);
     }
 
-    Event.attachListenerForEventCount(userID, compareEventCountWithRemote);
+    listener = Event.attachListenerForEventCount(userID, compareEventCountWithRemote);
 
     return eventList;
   }
@@ -210,7 +210,8 @@ class EventModelView {
         if (removedUIUpdate != null) removedUIUpdate!();
       }
     } else { //sync events from firebase to local, if there are extra events
-      if (newEventCount > allEventList!.length) {
+      //if listener is null, syncing is done
+      if (listener != null && newEventCount > allEventList!.length) {
         List<Event> rawEventList = await Event.getAllEventsFirebase(userID);
         for (final rawEvent in rawEventList) {
           Map<String, Object?> eventData = {
@@ -228,6 +229,9 @@ class EventModelView {
         allEventList = null;
         refreshCallback();
       }
+
+      await listener!.cancel();
+      listener = null;
     }
   }
 

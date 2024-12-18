@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hediaty/CustomWidgets/GiftEditingDialog.dart';
 import 'package:hediaty/ModelView/GiftModelView.dart';
 import 'package:hediaty/Models/gift.dart';
 import 'package:hediaty/Pages/giftDescriptionPage.dart';
@@ -32,17 +33,19 @@ class GiftWidgetState extends State<GiftWidget>{
   bool isNotDeleted = true;
 
   //update gift pledge status if someone pledged a gift in realtime
-  void updatePledgeStatus(String pledgerID){
+  void updatePledgeStatus(String newPledgerID){
+    String? pledgerID = newPledgerID == "" ? null : newPledgerID;
     if(widget.gift.pledgerID != pledgerID){
+      print("New pledgerID is ${pledgerID}");
 
       //update localDB if pledge/unpledge happens
       //to test --> calling without await
       if(widget.isOwner){
-        Gift.updatePledgerLocal(pledgerID, widget.gift.ID);
+        Gift.updatePledgerLocal(newPledgerID, widget.gift.ID);
       }
       //update pledger ID
       widget.gift.pledgerID = pledgerID;
-      String snackMessage = pledgerID == "" ?  "${widget.gift.name} has been unPledged :(" : "${widget.gift.name} has been pledged!!" ;
+      String snackMessage = newPledgerID == "" ?  "${widget.gift.name} has been unPledged :(" : "${widget.gift.name} has been pledged!!" ;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(snackMessage)));
       setState(() {
         
@@ -93,28 +96,22 @@ class GiftWidgetState extends State<GiftWidget>{
                   //print("firebase ID now is ${widget.event.firebaseID}");
                   setState(() {});
                 }
-                /* else if (value == EventOption.Edit) {
+                else if (value == EventOption.Edit) {
                   await showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return EventEditingDialog(
+                        return GiftEditingDialog(
                             setStateCallBack: () {
                               setState(() {});
                             },
-                            eventToModify: widget.event,
+                            giftToModify: widget.gift,
                             modelView: widget.modelView);
                       });
                   setState(() {});
                 }
-                */ 
                 else if (value == EventOption.Delete) {
                   await widget.modelView.removeGift(widget.gift);
                 }
-                /*else if(value == EventOption.Hide){
-                  await widget.modelView.hideGift(widget.gift.firebaseID!, widget.gift.ID);
-                  widget.gift.firebaseID = null;
-                  setState(() {});
-                }*/
               },
               itemBuilder: (context) => [
 

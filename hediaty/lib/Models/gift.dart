@@ -32,6 +32,9 @@ class Gift{
     List<Map> rawGifts = await db.rawQuery("SELECT * FROM GIFTS WHERE eventID = $eventID");
     print(rawGifts);
     for(final rawGift in rawGifts){
+      String? rawFirebaseID = rawGift["firebaseID"];
+      String? firebaseID = (rawFirebaseID == "" || rawFirebaseID == null) ? null : rawFirebaseID; 
+
       gifts.add(Gift(ID: rawGift["ID"],
       name: rawGift["name"],
       price: rawGift["price"],
@@ -39,8 +42,8 @@ class Gift{
       description: rawGift["description"],
       isPledged: rawGift["isPledged"] == 0 ? false : true,
       eventID: rawGift["eventID"],
-      pledgerID: rawGift["pledgerID"],
-      firebaseID: rawGift["firebaseID"]));
+      pledgerID: rawGift["pledgerID"] == "" ? null : rawGift["pledgerID"],
+      firebaseID: firebaseID));
     }
     print("Gifts!!!");
     return gifts;    
@@ -70,7 +73,7 @@ class Gift{
       description: rawGift["description"],
       isPledged: rawGift["isPledged"] == 0 ? false : true,
       eventID: rawGift["eventID"],
-      pledgerID: rawGift["pledgerID"],
+      pledgerID: rawGift["pledgerID"] == "" ? null : rawGift["pledgerID"],
       firebaseID: rawGiftKey));
     }
     print("Gifts!!!");
@@ -174,7 +177,7 @@ class Gift{
           print("Got the Gift Count!");
           callback(event.snapshot.value as int);
         }
-      ,);    
+      ,);  
       return giftPledgeListener;
 
   }
@@ -194,7 +197,7 @@ class Gift{
       description: rawGift["description"],
       isPledged: rawGift["isPledged"] == 0 ? false : true,
       eventID: rawGift["eventID"],
-      pledgerID: rawGift["pledgerID"],
+      pledgerID: rawGift["pledgerID"] == "" ? null : rawGift["pledgerID"],
       firebaseID: giftKey));
     }
     print("Hello");
@@ -221,6 +224,30 @@ class Gift{
   static Future<void> setFirebaseIDinLocal(String? firebaseID, int giftID) async{
     final db = await DBManager.getDataBase();
     await db.update("Gifts", {"firebaseID": firebaseID}, where: "ID = $giftID");        
+  }
+
+  static Future<void> updateGiftLocal(Gift newGift) async{
+    final db = await DBManager.getDataBase();
+    Map<String, Object?> giftData = {
+      "name" : newGift.name,
+      "description" : newGift.description??"",
+      "category" : newGift.category,
+      "price" : newGift.price
+    };
+    await db.update("Gifts",giftData,where: "ID = ${newGift.ID}");
+
+  }
+
+  static Future<void> updateGiftFirebase(Gift newGift) async{
+    final GiftRef = FirebaseDatabase.instance.ref("Gifts/${newGift.firebaseID}");
+    Map<String, Object?> giftData = {
+      "name" : newGift.name,
+      "description" : newGift.description??"",
+      "category" : newGift.category,
+      "price" : newGift.price
+    };
+    await GiftRef.update(giftData);
+
   }
 
 }

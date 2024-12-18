@@ -190,5 +190,16 @@ class UserModel{
     );
   }
 
+  static Future<bool> checkIfPhoneExistsFirebase(String phone) async{
+    var usersRef = FirebaseDatabase.instance.ref("Users");
+    DatabaseEvent fetchedEvents = await usersRef.orderByChild("phone").equalTo(phone).once();
+    if(fetchedEvents.snapshot.value == null){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
   
 }

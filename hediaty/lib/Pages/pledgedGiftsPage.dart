@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/ModelView/PledgedGiftModelView.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
 import "../CustomWidgets/pledgedGiftWidget.dart";
@@ -15,17 +16,14 @@ class PledgedGiftsPage extends StatefulWidget {
 class _PledgedGiftsPageState extends State<PledgedGiftsPage> {
 
 
-  List<PledgedGiftWidget> pledgedGiftWidgetList = [];
-  Future<void> getPledgedGifts() async{
-    List pledgedGiftList = await Gift.getPledgedGiftsByUserID(widget.userID);
-    pledgedGiftWidgetList = pledgedGiftList.map((gift) => PledgedGiftWidget(gift: gift, refreshCallback: () {
-      setState(() {
-        
-      });
-    },),).toList();
+  late PledgedGiftModelView modelView;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    modelView = PledgedGiftModelView(userID: widget.userID);
+
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +32,10 @@ class _PledgedGiftsPageState extends State<PledgedGiftsPage> {
         title: Text("Your Pledged Gifts"),
         backgroundColor: Colors.purple,
 
+
       ),
       body: FutureBuilder(
-        future: getPledgedGifts(), 
+        future: modelView.getPledgedGifts(), 
         builder: (context, snapshot){
 
               if(snapshot.connectionState == ConnectionState.waiting){
@@ -48,7 +47,7 @@ class _PledgedGiftsPageState extends State<PledgedGiftsPage> {
                 }
                 return  SingleChildScrollView(
                           child: Center( child: Column(
-                            children: pledgedGiftWidgetList
+                            children: snapshot.data!
                           )
                           )
                 );

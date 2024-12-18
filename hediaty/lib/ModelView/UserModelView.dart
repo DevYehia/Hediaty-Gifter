@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:hediaty/CustomWidgets/friend_widget.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/user.dart';
@@ -91,4 +92,13 @@ class UserViewModel {
       }
     }
   }
+
+  static Future<bool> checkIfPhoneExists(String phone, Function() phoneExistsUI) async{
+    bool result = await UserModel.checkIfPhoneExistsFirebase(phone);
+    if(result){
+      phoneExistsUI();
+    }
+    return result;
+  }
+
 }
