@@ -86,7 +86,9 @@ class GiftWidgetState extends State<GiftWidget>{
               ]
           )
           ),
-          if (widget.isOwner)
+
+          //no editing if gifts are pledged or not the owner
+          if (widget.isOwner && (widget.gift.pledgerID == null || widget.gift.pledgerID == ""))
             PopupMenuButton(
               icon: Icon(Icons.more_vert),
               onSelected: (value) async {
@@ -121,8 +123,7 @@ class GiftWidgetState extends State<GiftWidget>{
                 /*if(widget.gift.firebaseID != null)
                 PopupMenuItem(
                     child: Text("Hide"), value: EventOption.Hide),*/                
-                if (widget.gift.pledgerID == null || widget.gift.pledgerID == "") //display event editing only if it is not past event
-                  PopupMenuItem(value: EventOption.Edit, child: Text("Edit")),
+                  PopupMenuItem(value: EventOption.Edit, child: Text("Edit")),                
                 PopupMenuItem(value: EventOption.Delete, child: Text("Delete"))
               ],
             ),
