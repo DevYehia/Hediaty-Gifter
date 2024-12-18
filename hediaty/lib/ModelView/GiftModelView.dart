@@ -21,7 +21,9 @@ class GiftModelView{
   final String userID;
   VoidCallback refreshCallback;
   StreamSubscription<DatabaseEvent>? giftCountListener;
-  GiftModelView({required this.isOwner, required this.event, required this.userID, required this.refreshCallback});
+  GiftModelView({required this.isOwner, required this.event, required this.userID, required this.refreshCallback}){
+
+  }
 
 
   void setFilters(List<GiftFilter> newFilters){
@@ -45,7 +47,7 @@ class GiftModelView{
       allGiftList = giftModelList.map((gift) => GiftWidget(gift: gift, isOwner: isOwner,userID: userID,modelView: this,),).toList();
     }
 
-    if(event.firebaseID != null){ //attach listener for published Event ONLY
+    if(event.firebaseID != null && giftCountListener == null){ //attach listener for published Event ONLY
       giftCountListener = Gift.attachListenerForGiftCount(event.firebaseID!, compareGiftCountWithRemote);
     }
     print("Gift Widgets are $giftList");
@@ -151,7 +153,7 @@ class GiftModelView{
       }
     } else { //sync events from firebase to local, if there are extra gifts
       //if listener is null --> sync is done
-      if (giftCountListener != null && newGiftCount > allGiftList!.length) {
+      if (newGiftCount > allGiftList!.length) {
 
         //can't be null, since listener attached only to published events
         List<Gift> rawGiftList = await Gift.getAllGiftsFirebase(event.firebaseID!); 
@@ -168,7 +170,6 @@ class GiftModelView{
       }
         //after finishing sync cancel the listener
         await giftCountListener!.cancel();
-        giftCountListener = null;
         print("Cancelled successfully");
     }
   }

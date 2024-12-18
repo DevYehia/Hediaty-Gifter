@@ -78,7 +78,9 @@ class EventModelView {
       eventList = selectedSort!.sort(eventList);
     }
 
-    listener = Event.attachListenerForEventCount(userID, compareEventCountWithRemote);
+    if(listener == null){
+      listener = Event.attachListenerForEventCount(userID, compareEventCountWithRemote);
+    }
 
     return eventList;
   }
@@ -211,7 +213,7 @@ class EventModelView {
       }
     } else { //sync events from firebase to local, if there are extra events
       //if listener is null, syncing is done
-      if (listener != null && newEventCount > allEventList!.length) {
+      if (newEventCount > allEventList!.length) {
         List<Event> rawEventList = await Event.getAllEventsFirebase(userID);
         for (final rawEvent in rawEventList) {
           Map<String, Object?> eventData = {
@@ -231,7 +233,7 @@ class EventModelView {
       }
 
       await listener!.cancel();
-      listener = null;
+      //listener = null;
     }
   }
 
