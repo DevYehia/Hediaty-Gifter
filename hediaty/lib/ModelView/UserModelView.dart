@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hediaty/CustomWidgets/friend_widget.dart';
+import 'package:hediaty/Models/DBManager.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/user.dart';
 
@@ -100,5 +102,36 @@ class UserViewModel {
     }
     return result;
   }
+
+  static Future<String?> login (String email, String password) async{
+
+    String? prevID;
+    if(FirebaseAuth.instance.currentUser != null){
+      prevID = FirebaseAuth.instance.currentUser!.uid;
+    }
+
+    try{
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password
+     );
+
+      if(credential.user!.uid != prevID){
+        await DBManager.resetLocalDB();
+      }
+      
+      return credential.user!.uid;
+    }
+    on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+      return null;
+      }
+
+  }
+
 
 }
