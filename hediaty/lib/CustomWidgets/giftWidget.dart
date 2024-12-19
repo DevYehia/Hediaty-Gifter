@@ -20,11 +20,13 @@ class GiftWidget extends StatefulWidget {
   final bool isOwner;
   final String userID;
   final GiftModelView modelView;
+  final bool isEventFinished;
   GiftWidget(
       {required this.gift,
       required this.isOwner,
       required this.userID,
-      required this.modelView});
+      required this.modelView,
+      required this.isEventFinished});
   @override
   State<StatefulWidget> createState() {
     return GiftWidgetState();
@@ -156,6 +158,7 @@ class GiftWidgetState extends State<GiftWidget> {
                             isOwner: widget.isOwner,
                             isPledged: showPledgedStyle,
                             userID: widget.userID,
+                            isEventFinished: widget.isEventFinished,
                           )));
             },
           )

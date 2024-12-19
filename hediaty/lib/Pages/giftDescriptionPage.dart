@@ -10,6 +10,7 @@ class GiftDescriptionPage extends StatefulWidget {
   final bool isOwner;
   final bool isPledged;
   final String userID;
+  final bool isEventFinished;
 
   GiftDescriptionPage({
     required this.title,
@@ -17,6 +18,7 @@ class GiftDescriptionPage extends StatefulWidget {
     required this.isOwner,
     required this.isPledged,
     required this.userID,
+    required this.isEventFinished
   });
 
   @override
@@ -113,7 +115,7 @@ class _GiftDescriptionPageState extends State<GiftDescriptionPage> {
                         ),
                       ],
                     ),
-                    (widget.isOwner || widget.isPledged)
+                    (widget.isOwner || widget.isPledged || widget.isEventFinished)
                         ? const SizedBox.shrink()
                         : ElevatedButton(
                             onPressed: () {

@@ -47,7 +47,8 @@ class GiftModelView{
       allGiftList = giftModelList.map((gift) => GiftWidget(gift: gift, 
       isOwner: isOwner,
       userID: userID,
-      modelView: this,),).toList();
+      modelView: this,
+      isEventFinished: event.eventDate.isBefore(DateTime.now()),),).toList();
     }
 
     if(event.firebaseID != null && giftCountListener == null){ //attach listener for published Event ONLY
@@ -83,7 +84,8 @@ class GiftModelView{
         eventID: event.eventID
       ) ;
     allGiftList?.add(
-        GiftWidget(gift: addedGift, isOwner: isOwner, userID: userID, modelView: this,)
+        GiftWidget(gift: addedGift, isOwner: isOwner, userID: userID, modelView: this,
+        isEventFinished: event.eventDate.isBefore(DateTime.now()),)
     );
     refreshCallback();
   }

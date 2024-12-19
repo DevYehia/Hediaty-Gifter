@@ -199,7 +199,7 @@ class SignUpPageState extends State<SignUpPage> {
                                           }
                                         },
                                       );
-                                      DarkModeSelection.getDarkMode(); //initialize dark mode bool
+                                      await DarkModeSelection.getDarkModeFromPref(); //initialize dark mode bool
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
