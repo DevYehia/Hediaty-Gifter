@@ -2,12 +2,15 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hediaty/ModelView/Authentication.dart';
 import 'package:hediaty/ModelView/UserModelView.dart';
 import 'package:hediaty/Models/DBManager.dart';
 import 'package:hediaty/Models/gift.dart';
 import 'package:hediaty/Pages/EnterLoadPage.dart';
 import 'package:hediaty/Pages/SignUpPage.dart';
 import 'package:hediaty/Pages/mainPage.dart';
+import 'package:hediaty/darkModeSelection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage();
@@ -19,13 +22,13 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   Future<void> authAndRedirect(String email, String password) async {
-    UserViewModel.login(email, password).then(
-      (userID) {
+    Authentication.login(email, password).then(
+      (userID) async{
         if (userID != null) {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => MyMainPage(title: "Gifter")));
+                  builder: (context) => MyMainPage(title: "Gifter", userID: userID!,)));
         } else {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
@@ -33,6 +36,7 @@ class LoginPageState extends State<LoginPage> {
         }
       },
     );
+    await DarkModeSelection.getDarkModeFromPref();
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoadingScreen()));
   }

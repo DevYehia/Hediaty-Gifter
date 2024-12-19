@@ -9,8 +9,10 @@ import 'homePage.dart';
 
 
 class MyMainPage extends StatefulWidget {
-  const MyMainPage({super.key, required this.title});
+  MyMainPage({super.key, required this.title, required this.userID, this.darkMode});
   final String title;
+  final String userID;
+  bool? darkMode;
 
   @override
   State<MyMainPage> createState() => _MyMainPageState();
@@ -18,8 +20,6 @@ class MyMainPage extends StatefulWidget {
 
 class _MyMainPageState extends State<MyMainPage> {
   int navCurrIndex = 0;
-  //UserModel loggedInUser = LoggedUser.getLoggedUser();
-  String loggedUserID = UserModel.getLoggedUserID();
   PageController pageSwipeController = PageController();
   var currentPageValue = 0.0;
   Key navBarkey = UniqueKey();
@@ -43,7 +43,7 @@ class _MyMainPageState extends State<MyMainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("Logged User Now is ${loggedUserID}");
+    print("Logged User Now is ${widget.userID}");
     return Scaffold(
       body: PageView(
 
@@ -52,10 +52,10 @@ class _MyMainPageState extends State<MyMainPage> {
           botNavBarNotifer.value = value;
         },
         children: [
-          MyHomePage(title: "Your Friends"),
-          EventPage(title: "Your Events", isOwner: true,userID: loggedUserID,),
-          ProfilePage(userID: loggedUserID, isOwner: true,),
-          PledgedGiftsPage(userID: loggedUserID,)                  
+          MyHomePage(title: "Your Friends", darkMode: widget.darkMode,),
+          EventPage(title: "Your Events", isOwner: true,userID: widget.userID,),
+          ProfilePage(userID: widget.userID, isOwner: true,),
+          PledgedGiftsPage(userID: widget.userID,)                  
         ],
         ),
       bottomNavigationBar: botNavBar

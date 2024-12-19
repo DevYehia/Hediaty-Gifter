@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
+import 'package:hediaty/darkModeSelection.dart';
 import 'package:intl/intl.dart';
 
 class PledgedGiftWidget extends StatefulWidget {
@@ -22,9 +23,21 @@ class PledgedGiftWidget extends StatefulWidget {
 }
 
 class PledgedGiftWidgetState extends State<PledgedGiftWidget> {
+
+
+  bool? darkMode;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    darkMode = DarkModeSelection.getDarkMode();
+  }
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: darkMode == false ? Colors.white : Colors.black,
+      shadowColor: darkMode == false ? Colors.black : Colors.white,
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
@@ -62,7 +75,7 @@ class PledgedGiftWidgetState extends State<PledgedGiftWidget> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: darkMode == false ?  Colors.black87 : Colors.white,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -70,7 +83,7 @@ class PledgedGiftWidgetState extends State<PledgedGiftWidget> {
                         "Event Date: ${widget.dateFormatter.format(widget.date!)}",
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[700],
+                          color: darkMode == false ?  Colors.black87 : Colors.white,
                         ),
                       ),
                     ],

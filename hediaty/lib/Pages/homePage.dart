@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:hediaty/CustomWidgets/friendSearchDelegate.dart';
 import 'package:hediaty/ModelView/UserModelView.dart';
 import 'package:hediaty/Models/user.dart';
+import 'package:hediaty/darkModeSelection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../CustomWidgets/friend_widget.dart';
 import '../Pages/eventsPage.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  MyHomePage({super.key, required this.title, this.darkMode});
   final String title;
+  bool? darkMode;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -17,6 +20,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late UserViewModel viewModel;
+  bool? darkMode;
 
   void addedEventNotif(String? userName){
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${userName??"User"} Added Event")));
@@ -26,6 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    darkMode = DarkModeSelection.darkMode;
+
     viewModel = UserViewModel(
         UIAddEvent: addedEventNotif,
         refreshCallback: () {
@@ -38,10 +44,12 @@ class _MyHomePageState extends State<MyHomePage> {
     //initFriendsList();
     final TextEditingController newFriendNameController =
         TextEditingController();
+        print("dark choice is $darkMode");
     return Scaffold(
+      backgroundColor: darkMode == null || darkMode == false ? Colors.white : Colors.black,
         appBar: AppBar(
           //The app's icon
-          leading: Image.asset("assets/gift_logo.jpg"),
+          leading: darkMode == false ? Image.asset("assets/gift_logo.jpg") : Image.asset("assets/gift_logo_inverted.jpg"),
 
           backgroundColor: Colors.blue,
           title: Text(widget.title),

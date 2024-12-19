@@ -4,7 +4,9 @@ import 'package:hediaty/ModelView/EventModelView.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Pages/giftPage.dart';
+import 'package:hediaty/darkModeSelection.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum EventOption { Publish, Edit, Delete, Hide }
 
@@ -27,11 +29,13 @@ class _EventWidgetState extends State<EventWidget> {
   final double paddingPixels = 16;
   DateFormat dateFormatter = DateFormat("d/M/y");
   late Color nameColor;
+  bool? darkMode;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    darkMode = DarkModeSelection.darkMode;
     nameColor = widget.event.firebaseID == null ? Colors.red : Colors.blue;
     if(!widget.isOwner){
       widget.modelView.listenForEventChange(widget.event);
@@ -61,7 +65,10 @@ class _EventWidgetState extends State<EventWidget> {
           ),
         );
       },
-      child: Card(child: Row(
+      child: Card(
+        color: darkMode == null || darkMode == false ? Colors.white : Colors.black,
+        shadowColor: darkMode == null || darkMode == false ? Colors.black : Colors.white,
+        child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
@@ -90,7 +97,7 @@ class _EventWidgetState extends State<EventWidget> {
           ),
           if (widget.isOwner)
             PopupMenuButton(
-              icon: Icon(Icons.more_vert),
+              icon: Icon(Icons.more_vert, color: darkMode == false ? Colors.black : Colors.white,),
               onSelected: (value) async {
                 if (value == EventOption.Publish) {
                   widget.event.firebaseID =

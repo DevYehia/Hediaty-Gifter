@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hediaty/ModelView/Authentication.dart';
 import 'package:hediaty/ModelView/UserModelView.dart';
+import 'package:hediaty/Pages/EnterLoadPage.dart';
 import 'package:hediaty/Pages/mainPage.dart';
+import 'package:hediaty/darkModeSelection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage();
@@ -15,24 +19,10 @@ class SignUpPage extends StatefulWidget {
 
 class SignUpPageState extends State<SignUpPage> {
   //returns ID of user
-  Future<String> addUserToFirebaseAuth(String email, String password) async {
-    var userCredentials = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
-    return userCredentials.user!.uid;
-  }
 
-  Future<void> addUsertoFirebaseDB(
-      String ID, String name, String phone, String email) async {
-    var userListRef = FirebaseDatabase.instance.ref("Users");
-    await userListRef.update({
-      ID: {"email": email, "name": name, "phone": phone, "eventCount": 0}
-    });
-  }
-
-  void PhoneExistsUpdate(){
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Phone Already Exists")));
+  void PhoneExistsUpdate() {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Phone Already Exists")));
   }
 
   @override
@@ -147,6 +137,9 @@ class SignUpPageState extends State<SignUpPage> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your Password';
                             }
+                            if (value.length < 6) {
+                              return "password must be at least 6 characters";
+                            }
                             return null;
                           },
                         ),
@@ -184,23 +177,34 @@ class SignUpPageState extends State<SignUpPage> {
                                                   "Password Fields Don't Match")));
                                     } else {
                                       //check if phone number is already existent
-                                      bool found = await UserViewModel.checkIfPhoneExists(phoneController.text,PhoneExistsUpdate);
-                                      if(!found){
-                                      //add user to firebase Auth and Firebase RealTime Database
-                                      String ID = await addUserToFirebaseAuth(
-                                          emailController.text,
-                                          passController.text);
-                                      await addUsertoFirebaseDB(
-                                          ID,
-                                          nameController.text,
-                                          phoneController.text,
-                                          emailController.text);
+                                      Authentication.signUp(
+                                              nameController.text,
+                                              phoneController.text,
+                                              emailController.text,
+                                              passController.text)
+                                          .then(
+                                        (uID) async {
+                                          if (uID == null) {
+                                            Navigator.pop(context);
+                                          } else {
+    
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MyMainPage(
+                                                          title: "Gifter",
+                                                          userID: uID,
+                                                        )));
+                                          }
+                                        },
+                                      );
+                                      DarkModeSelection.getDarkMode(); //initialize dark mode bool
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  MyMainPage(title: "Gifter")));
-                                      }
+                                                  LoadingScreen()));
                                     }
                                   }
                                 },

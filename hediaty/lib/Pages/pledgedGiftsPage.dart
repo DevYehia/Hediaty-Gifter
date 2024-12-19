@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hediaty/ModelView/PledgedGiftModelView.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
+import 'package:hediaty/darkModeSelection.dart';
 import "../CustomWidgets/pledgedGiftWidget.dart";
 
 class PledgedGiftsPage extends StatefulWidget {
@@ -17,17 +18,20 @@ class _PledgedGiftsPageState extends State<PledgedGiftsPage> {
 
 
   late PledgedGiftModelView modelView;
+  bool? darkMode;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     modelView = PledgedGiftModelView(userID: widget.userID);
+    darkMode = DarkModeSelection.getDarkMode();
 
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: darkMode == false ? Colors.white : Colors.black,
       appBar: AppBar(
         title: Text("Your Pledged Gifts"),
         backgroundColor: Colors.purple,

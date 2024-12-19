@@ -6,6 +6,7 @@ import 'package:hediaty/CustomWidgets/GiftEditingDialog.dart';
 import 'package:hediaty/ModelView/GiftModelView.dart';
 import 'package:hediaty/Models/gift.dart';
 import 'package:hediaty/Pages/giftDescriptionPage.dart';
+import 'package:hediaty/darkModeSelection.dart';
 
 //This widget contains
 //* Gift Image (if found)
@@ -34,6 +35,7 @@ class GiftWidgetState extends State<GiftWidget> {
   double paddingPixels = 16;
   late StreamSubscription<DatabaseEvent> pledgeListener;
   bool isNotDeleted = true;
+  bool? darkMode;
 
   //update gift pledge status if someone pledged a gift in realtime
   void updatePledgeStatus(String newPledgerID) {
@@ -60,6 +62,7 @@ class GiftWidgetState extends State<GiftWidget> {
   @override
   void initState() {
     super.initState();
+    darkMode = DarkModeSelection.getDarkMode();
     if (widget.gift.firebaseID != null) {
       pledgeListener = Gift.attachListenerForPledge(
           widget.gift.firebaseID!, updatePledgeStatus);
@@ -75,13 +78,15 @@ class GiftWidgetState extends State<GiftWidget> {
     return isNotDeleted
         ? InkWell(
             child: Card(
+                color: darkMode == false ? Colors.white : Colors.black,
+                shadowColor: darkMode == false ? Colors.black : Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                       child: Row(children: [
                     Padding(
-                        child: Icon(Icons.card_giftcard),
+                        child: Icon(Icons.card_giftcard, color: darkMode == false ? Colors.black : Colors.white),
                         padding: EdgeInsets.all(paddingPixels)),
                     Padding(
                         child: Text(widget.gift.name!,
@@ -98,7 +103,7 @@ class GiftWidgetState extends State<GiftWidget> {
                       (widget.gift.pledgerID == null ||
                           widget.gift.pledgerID == ""))
                     PopupMenuButton(
-                      icon: Icon(Icons.more_vert),
+                      icon: Icon(Icons.more_vert, color: darkMode == false ? Colors.black : Colors.white),
                       onSelected: (value) async {
                         if (value == EventOption.Publish) {
                           widget.gift.firebaseID =

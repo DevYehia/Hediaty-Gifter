@@ -9,6 +9,7 @@ import 'package:hediaty/Util/Gifts/GiftFilter.dart';
 import 'package:hediaty/Util/Gifts/GiftNameSort.dart';
 import 'package:hediaty/Util/Gifts/GiftPriceSort.dart';
 import 'package:hediaty/Util/Gifts/GiftSortStrategy.dart';
+import 'package:hediaty/darkModeSelection.dart';
 
 class GiftPage extends StatefulWidget {
   final String title;
@@ -30,11 +31,13 @@ class GiftPage extends StatefulWidget {
 class GiftState extends State<GiftPage> {
   late GiftModelView modelView;
   GiftSortStrategy? selectedSort;
+  bool? darkMode;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    darkMode = DarkModeSelection.getDarkMode();
     modelView = GiftModelView(
         isOwner: widget.isOwner,
         userID: widget.userID,
@@ -47,6 +50,7 @@ class GiftState extends State<GiftPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: darkMode == false ? Colors.white : Colors.black,
         appBar: AppBar(
             //The app's icon
             leading: IconButton(
@@ -134,8 +138,8 @@ class GiftState extends State<GiftPage> {
                           BorderRadius.circular(15.0), // Rounded corners
                     ),
                     elevation: 10, // Shadow for depth
-                    color: Colors.white, // Card background color
-                    shadowColor: Colors.grey.withOpacity(0.5), // Shadow color
+                    color: darkMode == false ? Colors.white : Colors.black, // Card background color
+                    shadowColor: darkMode == false ? Colors.black : Colors.white, // Shadow color
                     margin: EdgeInsets.symmetric(
                         horizontal: 20, vertical: 10), // External margin
                     child: Padding(

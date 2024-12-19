@@ -7,6 +7,8 @@ import 'package:hediaty/Util/Events/EventDateSort.dart';
 import 'package:hediaty/Util/Events/EventFilter.dart';
 import 'package:hediaty/Util/Events/EventNameSort.dart';
 import 'package:hediaty/Util/Events/EventSortStrategy.dart';
+import 'package:hediaty/darkModeSelection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum SortCategories { nameSort, dateSort }
 
@@ -28,10 +30,13 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> {
   late EventModelView modelView;
   EventSortStrategy? selectedSort;
+  bool? darkMode;
   //attach a listener to user's event Count to update page accordingly
   @override
   void initState() {
     super.initState();
+
+    darkMode = DarkModeSelection.getDarkMode();
     modelView = EventModelView(
         userID: widget.userID,
         isOwner: widget.isOwner,
@@ -59,9 +64,10 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: darkMode == null || darkMode == false ? Colors.white : Colors.black,
         appBar: AppBar(
           //The app's icon
-          leading: widget.isOwner ? Image.asset("assets/gift_logo.jpg") : 
+          leading: widget.isOwner ? darkMode == false ? Image.asset("assets/gift_logo.jpg") : Image.asset("assets/gift_logo_inverted.jpg") : 
           IconButton(onPressed: (){
             Navigator.pop(context);
           }, icon: Icon(Icons.arrow_back)),

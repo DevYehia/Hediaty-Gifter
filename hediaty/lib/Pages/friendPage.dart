@@ -20,7 +20,7 @@ class _MyFriendPageState extends State<MyFriendPage> {
   StatefulWidget? selectedPage;
 
   @override 
-  void initState() {
+  void initState(){
     selectedPage = EventPage(title: "${widget.friendData.userName}'s Events", isOwner: false,userID: widget.friendData.userID);
   }
 
