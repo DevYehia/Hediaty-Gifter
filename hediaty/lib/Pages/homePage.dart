@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         content: TextField(
                           controller: newFriendNameController,
                           decoration: InputDecoration(
-                              hintText: 'Enter friend\'s Phone Number'),
+                              hintText: 'Phone Number'),
                         ),
                         actions: [
                           TextButton(
@@ -80,10 +80,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           TextButton(
                             onPressed: () async {
                               String friendPhone = newFriendNameController.text;
-                              await viewModel.addFriend(friendPhone);
-                              setState(() {
-                                // Handle adding the friend (e.g., API call)
-                              });
+                              bool addResult = await viewModel.addFriend(friendPhone);
+                              if(addResult){
+                                setState(() {
+                                  // Handle adding the friend (e.g., API call)
+                                });
+                              }
+                              else{
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Phone Not Found or already friend")));
+                              }
                               Navigator.of(context).pop(); // Close the dialog
                             },
                             child: Text('Add'),

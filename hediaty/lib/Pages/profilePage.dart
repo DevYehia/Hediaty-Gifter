@@ -4,7 +4,8 @@ import 'package:hediaty/Models/user.dart';
 
 class ProfilePage extends StatefulWidget {
   String userID;
-  ProfilePage({required this.userID});
+  bool isOwner;
+  ProfilePage({required this.userID, required this.isOwner});
 
   // TODO: implement createState
   @override
@@ -23,7 +24,10 @@ class ProfilePageState extends State<ProfilePage> {
     return Scaffold(
         appBar: AppBar(
           //The app's icon
-          leading: Image.asset("assets/gift_logo.jpg"),
+          leading: widget.isOwner ? Image.asset("assets/gift_logo.jpg") : 
+          IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.arrow_back)),
 
           // TRY THIS: Try changing the color here to a specific color (to
           // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar

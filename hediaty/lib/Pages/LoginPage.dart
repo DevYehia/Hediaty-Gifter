@@ -33,10 +33,8 @@ class LoginPageState extends State<LoginPage> {
         }
       },
     );
-
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoadingScreen()));
-
   }
 
   @override
@@ -118,6 +116,7 @@ class LoginPageState extends State<LoginPage> {
                             padding: EdgeInsets.only(top: 50),
                             child: ElevatedButton(
                                 onPressed: () async {
+                                  FocusManager.instance.primaryFocus?.unfocus();
                                   if (globalFormKey.currentState!.validate()) {
                                     await authAndRedirect(emailController.text,
                                         passController.text);

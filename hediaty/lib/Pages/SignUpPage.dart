@@ -173,6 +173,7 @@ class SignUpPageState extends State<SignUpPage> {
                             padding: EdgeInsets.only(top: 50),
                             child: ElevatedButton(
                                 onPressed: () async {
+                                  FocusManager.instance.primaryFocus?.unfocus();
                                   if (globalFormKey.currentState!.validate()) {
                                     //check if password and confirm password match
                                     if (passController.text !=

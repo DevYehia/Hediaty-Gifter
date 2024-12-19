@@ -36,15 +36,10 @@ class UserViewModel {
     return friendList!;
   }
 
-  Future<void> addFriend(String phone) async {
+  Future<bool> addFriend(String phone) async {
     bool addResult = await UserModel.addFriend(UserModel.getLoggedUserID(), phone);
 
-    if(addResult == true){
-
-    }
-    else{
-      //UI Update to indicate incorrect phone number
-    }
+    return addResult;
   }
 
   List<FriendWidget> get allFriendList {

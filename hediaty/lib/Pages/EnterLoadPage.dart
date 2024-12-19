@@ -16,11 +16,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
         child: Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.blue,
+            color: Colors.white,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       LoadingAnimationWidget.newtonCradle(color: Colors.red, size: 200),
-      Text(loading_title)
+      //Text(loading_title)
     ])));
   }
 }

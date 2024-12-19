@@ -37,7 +37,7 @@ class _MyFriendPageState extends State<MyFriendPage> {
               selectedPage = EventPage(title: "${widget.friendData.userName}'s Events", isOwner: false,userID: widget.friendData.userID);
             }
             else if(index == 1){
-              selectedPage = ProfilePage(userID: widget.friendData.userID,);
+              selectedPage = ProfilePage(userID: widget.friendData.userID, isOwner: false,);
             }
           });
         },

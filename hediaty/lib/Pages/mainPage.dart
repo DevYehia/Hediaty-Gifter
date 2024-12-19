@@ -54,7 +54,7 @@ class _MyMainPageState extends State<MyMainPage> {
         children: [
           MyHomePage(title: "Your Friends"),
           EventPage(title: "Your Events", isOwner: true,userID: loggedUserID,),
-          ProfilePage(userID: loggedUserID,),
+          ProfilePage(userID: loggedUserID, isOwner: true,),
           PledgedGiftsPage(userID: loggedUserID,)                  
         ],
         ),

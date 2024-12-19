@@ -61,7 +61,10 @@ class _EventPageState extends State<EventPage> {
     return Scaffold(
         appBar: AppBar(
           //The app's icon
-          leading: Image.asset("assets/gift_logo.jpg"),
+          leading: widget.isOwner ? Image.asset("assets/gift_logo.jpg") : 
+          IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.arrow_back)),
 
           // TRY THIS: Try changing the color here to a specific color (to
           // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar

@@ -61,7 +61,7 @@ class _EventWidgetState extends State<EventWidget> {
           ),
         );
       },
-      child: Row(
+      child: Card(child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
@@ -135,6 +135,7 @@ class _EventWidgetState extends State<EventWidget> {
             ),
         ],
       ),
+    )
     );
   }
 }

@@ -44,7 +44,10 @@ class GiftModelView{
       else{
         giftModelList = await Gift.getAllGiftsFirebase(event.firebaseID!);
       }
-      allGiftList = giftModelList.map((gift) => GiftWidget(gift: gift, isOwner: isOwner,userID: userID,modelView: this,),).toList();
+      allGiftList = giftModelList.map((gift) => GiftWidget(gift: gift, 
+      isOwner: isOwner,
+      userID: userID,
+      modelView: this,),).toList();
     }
 
     if(event.firebaseID != null && giftCountListener == null){ //attach listener for published Event ONLY
