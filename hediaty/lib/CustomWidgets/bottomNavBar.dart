@@ -49,6 +49,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 ),
               ),
               child: NavigationBar(
+                key: Key("OwnerBotNavBar"),
                 onDestinationSelected: (int index) {
                   navCurrIndex = index;
                   widget.pageSelectController.jumpToPage(index);
@@ -63,6 +64,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                     label: 'My Friends',
                   ),
                   NavigationDestination(
+                    key: Key("OwnerBotNavBarEvent"),
                     icon: Icon(Icons.notifications_sharp),
                     label: 'My Events',
                   ),

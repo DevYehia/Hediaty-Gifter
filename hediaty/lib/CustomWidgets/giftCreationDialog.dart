@@ -59,6 +59,7 @@ class _GiftCreationDialogState extends State<GiftCreationDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
+                key: Key('giftNameField'),
                 controller: giftNameController,
                 decoration: InputDecoration(
                   labelText: "Name",
@@ -74,6 +75,7 @@ class _GiftCreationDialogState extends State<GiftCreationDialog> {
                 },
               ),
               DropdownButtonFormField(
+                key: Key("giftCategoryField"),
                 dropdownColor: darkMode ? Colors.black : Colors.white,
                 decoration: InputDecoration(
                   labelText: "Category",
@@ -102,6 +104,7 @@ class _GiftCreationDialogState extends State<GiftCreationDialog> {
                 ),)),).toList()
               ),
               TextFormField(
+                key: Key('giftDescriptionField'),
                 controller: giftDescriptionController,
                 decoration: InputDecoration(
                   labelText: "Description",
@@ -111,6 +114,7 @@ class _GiftCreationDialogState extends State<GiftCreationDialog> {
                 style: TextStyle(color: darkMode ? Colors.white : Colors.black),
               ),
               TextFormField(
+                key: Key("giftPriceField"),
                 controller: giftPriceController,
                 decoration: InputDecoration(
                   labelText: "Price",
@@ -141,6 +145,7 @@ class _GiftCreationDialogState extends State<GiftCreationDialog> {
           ),
         ),
         TextButton(
+          key: Key("addDialogGift"),
           onPressed: () async {
             if (globalFormKey.currentState!.validate()) {
               widget.modelView.addGift(

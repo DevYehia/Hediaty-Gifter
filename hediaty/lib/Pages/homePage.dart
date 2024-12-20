@@ -48,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: darkMode == null || darkMode == false ? Colors.white : Colors.black,
         appBar: AppBar(
+          key: Key("FriendsPageAppbar"),
           //The app's icon
           leading: darkMode == false ? Image.asset("assets/gift_logo.jpg") : Image.asset("assets/gift_logo_inverted.jpg"),
 
@@ -65,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 icon: Icon(Icons.search)),
             IconButton(
+              key: Key("AddFriendButton"),
                 onPressed: () {
                   //setState(() {
                   print("Oi Stop");
@@ -74,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return AlertDialog(
                         title: Text('Add Friend'),
                         content: TextField(
+                          key: Key("NewFriendPhone"),
                           controller: newFriendNameController,
                           decoration: InputDecoration(
                               hintText: 'Phone Number'),
@@ -86,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text('Cancel'),
                           ),
                           TextButton(
+                            key: Key("AddFriendDialogButton"),
                             onPressed: () async {
                               String friendPhone = newFriendNameController.text;
                               bool addResult = await viewModel.addFriend(friendPhone);
@@ -95,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 });
                               }
                               else{
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Phone Not Found or already friend")));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(key: Key("AddFailedSnack"), content: Text("Phone Not Found or already friend")));
                               }
                               Navigator.of(context).pop(); // Close the dialog
                             },

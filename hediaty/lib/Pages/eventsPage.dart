@@ -120,6 +120,7 @@ class _EventPageState extends State<EventPage> {
             ),
             widget.isOwner
                 ? IconButton(
+                  key: Key("AddEventButton"),
                     onPressed: () async {
                       await showDialog(
                           context: context,

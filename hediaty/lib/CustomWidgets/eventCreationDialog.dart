@@ -53,6 +53,7 @@ class _EventCreationDialogState extends State<EventCreationDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
+                key: Key('eventNameField'),
                 controller: eventNameController,
                 decoration: InputDecoration(
                   labelText: "Name",
@@ -68,6 +69,7 @@ class _EventCreationDialogState extends State<EventCreationDialog> {
                 },
               ),
               DropdownButtonFormField(
+                key: Key("eventCategoryField"),
                 dropdownColor: darkMode == true ? Colors.black : Colors.white,
                 value: eventCatValue,
                 decoration: InputDecoration(
@@ -96,6 +98,7 @@ class _EventCreationDialogState extends State<EventCreationDialog> {
                 ),)),).toList()
               ),
               TextFormField(
+                key: Key('eventDescriptionField'),
                 controller: eventDescriptionController,
                 decoration: InputDecoration(
                   labelText: "Description",
@@ -105,6 +108,7 @@ class _EventCreationDialogState extends State<EventCreationDialog> {
                 style: TextStyle(color: darkMode == true ? Colors.white : Colors.black),
               ),
               TextFormField(
+                key: Key('eventDateField'),
                 controller: eventDateController,
                 decoration: InputDecoration(
                   labelText: "Date",
@@ -131,6 +135,7 @@ class _EventCreationDialogState extends State<EventCreationDialog> {
                 },
               ),
               TextFormField(
+                key: Key("eventLocationField"),
                 controller: eventLocationController,
                 decoration: InputDecoration(
                   labelText: "Location",
@@ -154,6 +159,7 @@ class _EventCreationDialogState extends State<EventCreationDialog> {
           ),
         ),
         TextButton(
+          key: Key("addDialogEvent"),
           onPressed: () async {
             if (globalFormKey.currentState!.validate()) {
               await widget.modelView.addEvent(

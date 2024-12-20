@@ -97,6 +97,7 @@ class _EventWidgetState extends State<EventWidget> {
           ),
           if (widget.isOwner)
             PopupMenuButton(
+              
               icon: Icon(Icons.more_vert, color: darkMode == false ? Colors.black : Colors.white,),
               onSelected: (value) async {
                 if (value == EventOption.Publish) {

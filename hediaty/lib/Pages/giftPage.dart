@@ -106,6 +106,7 @@ class GiftState extends State<GiftPage> {
               ),
               widget.isOwner
                   ? IconButton(
+                    key: Key("AddGiftButton"),
                       onPressed: () {
                         showDialog(
                             context: context,

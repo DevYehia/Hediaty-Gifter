@@ -80,6 +80,7 @@ class LoginPageState extends State<LoginPage> {
                     child: Column(
                       children: [
                         TextFormField(
+                          key: Key("LoginEmailField"),
                           controller: emailController,
                           decoration: const InputDecoration(
                               icon: Icon(Icons.mail),
@@ -102,6 +103,7 @@ class LoginPageState extends State<LoginPage> {
                           },
                         ),
                         TextFormField(
+                          key: Key('LoginPasswordField'),
                           obscureText: true,
                           controller: passController,
                           decoration: InputDecoration(
@@ -119,6 +121,7 @@ class LoginPageState extends State<LoginPage> {
                         Container(
                             padding: EdgeInsets.only(top: 50),
                             child: ElevatedButton(
+                              key: Key("LoginButton"),
                                 onPressed: () async {
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   if (globalFormKey.currentState!.validate()) {
