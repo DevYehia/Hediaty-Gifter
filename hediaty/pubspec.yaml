@@ -66,7 +66,7 @@ flutter:
 
   assets:
     - assets/gift_logo.jpg
-    - assets/youssef.jpeg
+    - assets/profileImage.png
     - assets/giftsBackground.jpg
     - assets/eventCalender.png
     - assets/gift_logo_inverted.jpg

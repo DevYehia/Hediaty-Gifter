@@ -79,7 +79,7 @@ class ProfilePageState extends State<ProfilePage> {
                         ),
                         child: CircleAvatar(
                           radius: 60,
-                          backgroundImage: AssetImage("assets/youssef.jpeg"),
+                          backgroundImage: AssetImage("assets/profileImage.png"),
                         ),
                       ),
                       Text(user!.userName,

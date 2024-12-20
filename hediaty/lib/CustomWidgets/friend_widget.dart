@@ -31,13 +31,13 @@ class FriendWidget extends StatelessWidget{
       displayedImage = Padding(padding: EdgeInsets.all(paddingPixels),
       child: Badge.count(
         count: eventCount,
-        child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/youssef.jpeg"))
+        child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/profileImage.png"))
         )
       );
     }
     else{
       displayedImage = Padding(padding: EdgeInsets.all(paddingPixels),
-        child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/youssef.jpeg"))
+        child: CircleAvatar(radius: 40, backgroundImage:AssetImage("assets/profileImage.png"))
       );
     }
 
