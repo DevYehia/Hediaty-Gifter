@@ -52,9 +52,12 @@ class _GiftDescriptionPageState extends State<GiftDescriptionPage> {
         child: Center(
           child: Column(
             children: [
-              CircleAvatar(
-                child: Icon(Icons.image),
+              Padding(
+                padding: EdgeInsets.only(top: 40),
+              child: CircleAvatar(
+                child: Icon(Icons.card_giftcard),
                 radius: 40,
+              ),
               ),
               Container(
                 margin: EdgeInsets.only(top: 40),

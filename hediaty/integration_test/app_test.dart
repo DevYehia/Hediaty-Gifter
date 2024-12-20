@@ -83,7 +83,7 @@ Future<void> testLogin(WidgetTester tester) async {
   await tester.enterText(loginPasswordField, '123456');
   await tester.tap(loginButton);
 
-  await tester.pumpAndSettle();
+  await tester.pumpAndSettle(); //for page transitions
 }
 
 Future<void> testFriendsPage(WidgetTester tester) async {

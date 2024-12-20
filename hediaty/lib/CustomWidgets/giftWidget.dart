@@ -37,6 +37,7 @@ class GiftWidgetState extends State<GiftWidget> {
   double paddingPixels = 16;
   late StreamSubscription<DatabaseEvent> pledgeListener;
   bool isNotDeleted = true;
+  late String notPublishedMessage;
   bool? darkMode;
 
   //update gift pledge status if someone pledged a gift in realtime
@@ -64,6 +65,10 @@ class GiftWidgetState extends State<GiftWidget> {
   @override
   void initState() {
     super.initState();
+    notPublishedMessage =
+        (widget.gift.firebaseID == null || widget.gift.firebaseID == "")
+            ? "Not Published"
+            : "";
     darkMode = DarkModeSelection.getDarkMode();
     if (widget.gift.firebaseID != null) {
       pledgeListener = Gift.attachListenerForPledge(
@@ -73,6 +78,10 @@ class GiftWidgetState extends State<GiftWidget> {
 
   @override
   Widget build(BuildContext context) {
+    notPublishedMessage =
+        (widget.gift.firebaseID == null || widget.gift.firebaseID == "")
+            ? "Not Published"
+            : "";
     bool showPledgedStyle =
         (widget.gift.pledgerID == "" || widget.gift.pledgerID == null)
             ? false
@@ -80,15 +89,18 @@ class GiftWidgetState extends State<GiftWidget> {
     return isNotDeleted
         ? InkWell(
             child: Card(
-                color: darkMode == false ? Colors.white : Colors.black,
-                shadowColor: darkMode == false ? Colors.black : Colors.white,
+              color: darkMode == false ? Colors.white : Colors.black,
+              shadowColor: darkMode == false ? Colors.black : Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                       child: Row(children: [
                     Padding(
-                        child: Icon(Icons.card_giftcard, color: darkMode == false ? Colors.black : Colors.white),
+                        child: Icon(Icons.card_giftcard,
+                            color: darkMode == false
+                                ? Colors.black
+                                : Colors.white),
                         padding: EdgeInsets.all(paddingPixels)),
                     Padding(
                         child: Text(widget.gift.name!,
@@ -97,15 +109,20 @@ class GiftWidgetState extends State<GiftWidget> {
                                     ? Colors.red
                                     : Colors.green),
                                 fontSize: 16)),
-                        padding: EdgeInsets.all(paddingPixels))
+                        padding: EdgeInsets.all(paddingPixels)),
+                    Text(notPublishedMessage,
+                        style: TextStyle(color: Colors.red))
                   ])),
 
                   //no editing if gifts are pledged or not the owner
                   if (widget.isOwner &&
                       (widget.gift.pledgerID == null ||
-                          widget.gift.pledgerID == "") && !widget.isEventFinished)
+                          widget.gift.pledgerID == "") &&
+                      !widget.isEventFinished)
                     PopupMenuButton(
-                      icon: Icon(Icons.more_vert, color: darkMode == false ? Colors.black : Colors.white),
+                      icon: Icon(Icons.more_vert,
+                          color:
+                              darkMode == false ? Colors.black : Colors.white),
                       onSelected: (value) async {
                         if (value == EventOption.Publish) {
                           widget.gift.firebaseID =
