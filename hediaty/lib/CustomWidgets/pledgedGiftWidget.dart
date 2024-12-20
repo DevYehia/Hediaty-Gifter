@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hediaty/ModelView/PledgedGiftModelView.dart';
 import 'package:hediaty/Models/event.dart';
 import 'package:hediaty/Models/gift.dart';
 import 'package:hediaty/darkModeSelection.dart';
@@ -8,11 +9,13 @@ class PledgedGiftWidget extends StatefulWidget {
   final Gift gift;
   DateTime date;
   DateFormat dateFormatter = DateFormat("d/M/y");
+  PledgedGiftModelView viewModel;
 
   PledgedGiftWidget({
     Key? key,
     required this.gift,
     required this.date,
+    required this.viewModel
   }) : super(key: key);
 
   @override
@@ -96,7 +99,7 @@ class PledgedGiftWidgetState extends State<PledgedGiftWidget> {
             (widget.date.isAfter(DateTime.now()))
                 ? IconButton(
                     onPressed: () async {
-                      await Gift.unpledgeGift(widget.gift.firebaseID!);
+                      await widget.viewModel.removePledgedGift(widget.gift);
                       //widget.refreshCallback();
                     },
                     icon: const Icon(Icons.clear),

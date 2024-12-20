@@ -23,7 +23,9 @@ class _PledgedGiftsPageState extends State<PledgedGiftsPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    modelView = PledgedGiftModelView(userID: widget.userID);
+    modelView = PledgedGiftModelView(userID: widget.userID, refreshCallback: (){setState(() {
+      
+    });});
     darkMode = DarkModeSelection.getDarkMode();
 
   }
