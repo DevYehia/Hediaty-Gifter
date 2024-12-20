@@ -103,7 +103,7 @@ class GiftWidgetState extends State<GiftWidget> {
                   //no editing if gifts are pledged or not the owner
                   if (widget.isOwner &&
                       (widget.gift.pledgerID == null ||
-                          widget.gift.pledgerID == ""))
+                          widget.gift.pledgerID == "") && !widget.isEventFinished)
                     PopupMenuButton(
                       icon: Icon(Icons.more_vert, color: darkMode == false ? Colors.black : Colors.white),
                       onSelected: (value) async {

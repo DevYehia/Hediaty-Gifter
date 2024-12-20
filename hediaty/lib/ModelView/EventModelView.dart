@@ -6,6 +6,7 @@ import 'package:hediaty/CustomWidgets/eventWidget.dart';
 import 'package:hediaty/Enums/eventCategoryEnum.dart';
 import 'package:hediaty/Enums/eventStatusEnum.dart';
 import 'package:hediaty/Models/event.dart';
+import 'package:hediaty/Models/gift.dart';
 import 'package:hediaty/Models/user.dart';
 import 'package:hediaty/Util/Events/EventFilter.dart';
 import 'package:hediaty/Util/Events/EventSortStrategy.dart';
@@ -178,6 +179,13 @@ class EventModelView {
     if (eventToRemove.firebaseID != null) {
       await Event.removeEventFirebase(eventToRemove.firebaseID!);
       await UserModel.decrementEventCounter(eventToRemove.userID);
+    }
+    List<Gift> giftList = await Gift.getAllGifts(eventToRemove.eventID);
+    for (Gift gift in giftList){
+      await Gift.deleteGiftLocal(gift.ID);
+      if(gift.firebaseID != null && gift.firebaseID != ""){
+        await Gift.deleteGiftFirebase(gift.firebaseID!);
+      }
     }
     allEventList!.removeWhere(
         (eventWidg) => eventWidg.event.eventID == eventToRemove.eventID);

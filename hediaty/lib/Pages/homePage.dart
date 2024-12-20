@@ -22,8 +22,9 @@ class _MyHomePageState extends State<MyHomePage> {
   late UserViewModel viewModel;
   bool? darkMode;
 
-  void addedEventNotif(String? userName){
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${userName??"User"} Added Event")));
+  void addedEventNotif(String? userName) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("${userName ?? "User"} Added Event")));
   }
 
   @override
@@ -35,8 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
     viewModel = UserViewModel(
         UIAddEvent: addedEventNotif,
         refreshCallback: () {
-      setState(() {});
-    });
+          setState(() {});
+        });
   }
 
   @override
@@ -44,13 +45,16 @@ class _MyHomePageState extends State<MyHomePage> {
     //initFriendsList();
     final TextEditingController newFriendNameController =
         TextEditingController();
-        print("dark choice is $darkMode");
+    print("dark choice is $darkMode");
     return Scaffold(
-      backgroundColor: darkMode == null || darkMode == false ? Colors.white : Colors.black,
+        backgroundColor:
+            darkMode == null || darkMode == false ? Colors.white : Colors.black,
         appBar: AppBar(
           key: Key("FriendsPageAppbar"),
           //The app's icon
-          leading: darkMode == false ? Image.asset("assets/gift_logo.jpg") : Image.asset("assets/gift_logo_inverted.jpg"),
+          leading: darkMode == false
+              ? Image.asset("assets/gift_logo.jpg")
+              : Image.asset("assets/gift_logo_inverted.jpg"),
 
           backgroundColor: Colors.blue,
           title: Text(widget.title),
@@ -66,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 icon: Icon(Icons.search)),
             IconButton(
-              key: Key("AddFriendButton"),
+                key: Key("AddFriendButton"),
                 onPressed: () {
                   //setState(() {
                   print("Oi Stop");
@@ -74,11 +78,28 @@ class _MyHomePageState extends State<MyHomePage> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Add Friend'),
+                        surfaceTintColor:
+                            darkMode == true ? Colors.white : Colors.black,
+                        shadowColor:
+                            darkMode == true ? Colors.white : Colors.black,
+                        backgroundColor:
+                            darkMode == true ? Colors.black : Colors.white,
+                        title: Text('Add Friend',
+                            style: TextStyle(
+                                color:
+                                    darkMode! ? Colors.white : Colors.black)),
                         content: TextField(
+                          style: TextStyle(
+                              color: darkMode == true
+                                  ? Colors.white
+                                  : Colors.black),
                           key: Key("NewFriendPhone"),
                           controller: newFriendNameController,
                           decoration: InputDecoration(
+                              labelStyle: TextStyle(
+                                  color: darkMode == true
+                                      ? Colors.white
+                                      : Colors.black),
                               hintText: 'Phone Number'),
                         ),
                         actions: [
@@ -92,14 +113,18 @@ class _MyHomePageState extends State<MyHomePage> {
                             key: Key("AddFriendDialogButton"),
                             onPressed: () async {
                               String friendPhone = newFriendNameController.text;
-                              bool addResult = await viewModel.addFriend(friendPhone);
-                              if(addResult){
+                              bool addResult =
+                                  await viewModel.addFriend(friendPhone);
+                              if (addResult) {
                                 setState(() {
                                   // Handle adding the friend (e.g., API call)
                                 });
-                              }
-                              else{
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(key: Key("AddFailedSnack"), content: Text("Phone Not Found or already friend")));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        key: Key("AddFailedSnack"),
+                                        content: Text(
+                                            "Phone Not Found or already friend")));
                               }
                               Navigator.of(context).pop(); // Close the dialog
                             },
